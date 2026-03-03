@@ -38,7 +38,7 @@ const HOUSEHOLD_CLASS_IDS = new Set([
   79,  // toothbrush
 ]);
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+import { apiFetch } from './api.js';
 
 let onRefresh = null;
 let currentFile = null;
@@ -130,8 +130,8 @@ async function doScan() {
   let detections = [];
 
   try {
-    await fetch(`${API}/upload`, { method: 'POST', body: form });
-    const res = await fetch(`${API}/detect`, { method: 'POST' });
+    await apiFetch('/upload', { method: 'POST', body: form });
+    const res = await apiFetch('/detect', { method: 'POST' });
     const data = await res.json();
     detections = (data.detections || []).filter(d => HOUSEHOLD_CLASS_IDS.has(d.class_id));
   } catch {
@@ -289,7 +289,7 @@ async function doStore() {
   `);
 
   try {
-    await fetch(`${API}/store`, {
+    await apiFetch('/store', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ items }),

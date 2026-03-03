@@ -4,6 +4,8 @@
 
 [build.environment]
   VITE_API_URL = "https://arcera-python.onrender.com"
+  VITE_SUPABASE_URL = "https://ttfwgtdivflnjjvwzsdo.supabase.co"
+  VITE_SUPABASE_ANON_KEY = "sb_publishable_W-U3SfFQyJppD_KlbzU7Bg_ivSFGqBc"
 
 [[redirects]]
   from = "/*"
