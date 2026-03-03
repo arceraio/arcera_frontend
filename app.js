@@ -8,6 +8,7 @@ import { supabase } from './core/supabaseClient.js';
 import { renderLogin } from './core/login.js';
 
 supabase.auth.onAuthStateChange((_event, session) => {
+  document.getElementById('app-loading')?.remove();
   if (!session) { renderLogin(); return; }
 
   document.body.innerHTML = `

@@ -1,13 +1,7 @@
 import { render as renderSummary } from './objects/summary.js';
 import { render as renderItemsList } from './objects/items-list.js';
-import { supabase } from './core/supabaseClient.js';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-
-async function authHeader() {
-  const { data: { session } } = await supabase.auth.getSession();
-  return session ? { 'Authorization': `Bearer ${session.access_token}` } : {};
-}
 
 let allItems = [];
 let roomFilter = 0;
@@ -57,7 +51,7 @@ function bindMainEvents() {
   document.querySelectorAll('.item-card-delete').forEach(btn => {
     btn.addEventListener('click', async () => {
       const id = btn.dataset.id;
-      await fetch(`${API}/items/${id}`, { method: 'DELETE', headers: await authHeader() });
+      await fetch(`${API}/items/${id}`, { method: 'DELETE' });
       await loadItems();
     });
   });
@@ -65,7 +59,7 @@ function bindMainEvents() {
 
 async function loadItems() {
   try {
-    const res = await fetch(`${API}/items`, { headers: await authHeader() });
+    const res = await fetch(`${API}/items`);
     const data = await res.json();
     allItems = (data.items || []).map(it => ({
       ...it,

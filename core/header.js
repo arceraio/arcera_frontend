@@ -24,6 +24,9 @@ export function render() {
         </div>
       </div>
       <div class="header-right">
+        <button class="header-btn header-btn-login" id="headerLoginBtn" aria-label="Log in">
+          Login
+        </button>
         <button class="header-btn header-btn-add" id="headerAddBtn" aria-label="Add item">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
             <line x1="12" y1="5" x2="12" y2="19"/>

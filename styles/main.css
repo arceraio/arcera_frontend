@@ -128,6 +128,18 @@ body {
 
 .header-btn-person svg { color: var(--gray-500); }
 
+.header-btn-login {
+  width: auto;
+  padding: 0 14px;
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #fff;
+  background: #F94C66;
+  border-radius: 8px;
+}
+.header-btn-login:hover { background: #e0304f; opacity: 1; }
+
 /* ── Hamburger Drawer ── */
 
 .drawer-overlay {
