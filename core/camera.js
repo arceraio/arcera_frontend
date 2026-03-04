@@ -52,7 +52,7 @@ export function init(refreshCb) {
       <div class="camera-sheet-handle"></div>
       <div class="camera-sheet-header">
         <span class="camera-sheet-title">Scan Items</span>
-        <button class="camera-sheet-close" id="cameraClose">
+        <button class="camera-sheet-close" id="cameraClose" aria-label="Close">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
             <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
           </svg>
@@ -62,7 +62,9 @@ export function init(refreshCb) {
     </div>
   `);
 
-  document.querySelector('.nav-camera-btn').addEventListener('click', openModal);
+  document.addEventListener('click', e => {
+    if (e.target.closest('.nav-camera-btn')) openModal();
+  });
   document.getElementById('cameraOverlay').addEventListener('click', closeModal);
   document.getElementById('cameraClose').addEventListener('click', closeModal);
 }
@@ -90,11 +92,13 @@ function setBody(html) {
 function showPickScreen() {
   setBody(`
     <label class="camera-pick-area" for="cameraFileInput">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-        <circle cx="12" cy="13" r="4"/>
-      </svg>
-      <span id="cameraPickLabel">Tap to select a photo</span>
+      <div class="camera-pick-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+          <circle cx="12" cy="13" r="4"/>
+        </svg>
+      </div>
+      <span id="cameraPickLabel" class="camera-pick-label">Tap to select a photo</span>
       <span class="camera-pick-sub">JPG, PNG, WEBP</span>
       <input type="file" id="cameraFileInput" accept="image/*" style="display:none">
     </label>

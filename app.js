@@ -4,6 +4,7 @@ import { render as renderFooter, setActiveTab, updateItemsBadge } from './core/f
 import { loadItems, setView, getItem, setFilter } from './items.js';
 import { init as initCamera, open as openCamera } from './core/camera.js';
 import { init as initItemSheet, open as openItemSheet } from './core/item-sheet.js';
+import { init as initSettings, open as openSettings } from './core/settings.js';
 import { supabase } from './core/supabaseClient.js';
 import { renderLogin } from './core/login.js';
 
@@ -33,9 +34,10 @@ supabase.auth.onAuthStateChange((_event, session) => {
     });
   }
 
-  initDrawer(openCamera, navigate);
+  initDrawer(openCamera, navigate, session.user);
   initCamera(refresh);
   initItemSheet(refresh);
+  initSettings();
 
   if (window.matchMedia('(max-width: 768px)').matches) {
     const hdr = document.querySelector('.header');
@@ -47,7 +49,7 @@ supabase.auth.onAuthStateChange((_event, session) => {
   refresh();
 
   document.getElementById('headerAddBtn').addEventListener('click', openCamera);
-  // headerPersonBtn leads nowhere yet
+  document.getElementById('headerPersonBtn').addEventListener('click', openSettings);
 
   document.querySelectorAll('.bottom-nav .nav-item').forEach(btn => {
     btn.addEventListener('click', () => {

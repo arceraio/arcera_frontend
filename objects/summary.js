@@ -75,6 +75,13 @@ export function render(items) {
         </svg>
         <h2 class="hero-title">Start Documenting Your Belongings</h2>
         <p class="hero-subtitle">Scan a room with your camera to begin building your inventory.</p>
+        <button class="hero-scan-btn nav-camera-btn" aria-label="Scan items">
+          Scan Now
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+        </button>
       </div>
     `;
   }
@@ -92,9 +99,9 @@ export function render(items) {
     <div class="summary-stats">
 
       <div class="summary-stat" style="
-        --stat-color: var(--blue-500);
-        --stat-bg: #EFF6FF;
-        --stat-border: #BFDBFE;
+        --stat-color: var(--color-gold);
+        --stat-bg: rgba(201,168,76,0.06);
+        --stat-border: rgba(201,168,76,0.2);
       ">
         <div class="summary-stat-body">
           <span class="summary-stat-label">Total Items</span>
@@ -109,9 +116,9 @@ export function render(items) {
       <div class="summary-stat summary-stat--link"
            data-navigate="items" data-filter="needsinfo"
            style="
-             --stat-color: var(--emerald);
-             --stat-bg: #ECFDF5;
-             --stat-border: #A7F3D0;
+             --stat-color: #059669;
+             --stat-bg: rgba(5,150,105,0.05);
+             --stat-border: rgba(5,150,105,0.18);
            ">
         <div class="summary-stat-body">
           <span class="summary-stat-label">Total Value</span>
@@ -126,9 +133,9 @@ export function render(items) {
       <div class="summary-stat${duplicates > 0 ? ' summary-stat--link' : ''}"
            ${duplicates > 0 ? 'data-navigate="items" data-filter="duplicates"' : ''}
            style="
-             --stat-color: var(--amber);
-             --stat-bg: #FFFBEB;
-             --stat-border: #FDE68A;
+             --stat-color: #D97706;
+             --stat-bg: rgba(217,119,6,0.05);
+             --stat-border: rgba(217,119,6,0.18);
            ">
         <div class="summary-stat-body">
           <span class="summary-stat-label">Duplicates</span>

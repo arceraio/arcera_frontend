@@ -52,53 +52,36 @@ This document covers the **frontend platform app** — the authenticated, post-l
 
 ```css
 /* Core brand */
---navy:      #1E3A5F;   /* primary headings, buttons, hero backgrounds */
---white:     #FFFFFF;   /* card backgrounds, overlays */
+--color-bg:       #F9F7F4;  /* warm cream — default page/app background */
+--color-navy:     #0D1B2A;  /* deep navy — headers, footer, primary buttons */
+--color-gold:     #C9A84C;  /* accent gold — CTAs, active states, underlines */
+--color-body:     #2C2C2C;  /* primary body text */
+--color-muted:    #6B7280;  /* secondary / muted text */
+--color-divider:  #E8E4DF;  /* borders, dividers, section lines */
+--white:          #FFFFFF;  /* card surfaces, sheet backgrounds */
 
-/* Blue accent (primary interactive) */
---blue-500:  #3B82F6;   /* buttons, active states, links, badges */
---blue-600:  #2563EB;   /* button hover */
---blue-300:  #7DD3FC;   /* hover tints, drawer gradient end */
---blue-100:  #DBEAFE;   /* chip backgrounds, tint areas */
-
-/* Status */
---green-500: #22C55E;   /* success states */
---green-100: #DCFCE7;   /* success backgrounds */
---emerald:   #059669;   /* confirmed/verified states */
---amber:     #D97706;   /* warnings, items needing attention */
-
-/* Neutral scale */
---gray-50:   #F8FAFC;   /* page/app background (lightest) */
---gray-100:  #F1F5F9;   /* section backgrounds, input backgrounds */
---gray-200:  #E2E8F0;   /* borders, dividers */
---gray-300:  #CBD5E1;   /* placeholder icons */
---gray-400:  #94A3B8;   /* secondary text, timestamps */
---gray-500:  #64748B;   /* muted text */
---gray-600:  #475569;   /* body text */
---gray-700:  #334155;   /* primary body text */
-
-/* Semantic (not in :root — used inline) */
-/* Danger: #EF4444 / #DC2626 — delete actions only */
-/* Warning bg: #FEF3C7 / border: #FCD34D / text: #92400E */
+/* Status (used inline — not in :root) */
+/* Success: #059669 bg: rgba(5,150,105,0.08) */
+/* Danger:  #EF4444 / #DC2626 — delete actions only */
+/* Warning: bg #FEF3C7 / border #FCD34D / text #92400E */
 ```
 
 ### Typography
 
 | Use | Font | Weight | Notes |
 |-----|------|--------|-------|
-| All text | Inter | 400 / 500 / 600 / 700 | Single font family throughout |
-| Section titles | Inter | 700 | `color: var(--navy)` |
-| Stat values | Inter | 800 | `font-variant-numeric: tabular-nums; letter-spacing: -0.03em` |
-| Field labels | Inter | 700 | `text-transform: uppercase; letter-spacing: 0.4–0.7px; font-size: 0.62–0.72rem` |
-| Item names | Inter | 700 | `text-transform: capitalize` |
-| Body / descriptions | Inter | 400–500 | `color: var(--gray-500–700)` |
+| H1, H2 headlines | Cormorant Garamond | 600 | Serif — heritage + trust feel |
+| Section titles | Cormorant Garamond | 600 | `color: var(--color-navy)` |
+| Body copy | DM Sans | 400 / 500 | Clean sans for legibility |
+| Field labels | DM Sans | 500 | `text-transform: uppercase; letter-spacing: 0.4–0.7px; font-size: 0.62–0.72rem` |
+| Item names | DM Sans | 700 | `text-transform: capitalize` |
+| Large stats / numbers | DM Mono | 400 | `font-variant-numeric: tabular-nums; letter-spacing: 0.04em` |
+| Timestamps / muted | DM Sans | 400 | `color: var(--color-muted)` |
 
-**Font loaded via Google Fonts:**
+**Fonts loaded via Google Fonts:**
 ```html
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=DM+Sans:wght@400;500;700&family=DM+Mono&display=swap" rel="stylesheet" />
 ```
-
-**No other fonts.** Do not introduce Cormorant Garamond, DM Sans, or Space Mono — those belong to the marketing landing page, not the app.
 
 ### Elevation / Shadow
 
@@ -117,6 +100,16 @@ This document covers the **frontend platform app** — the authenticated, post-l
 /* 20px — pill chips */
 /* 24px — bottom sheet top corners */
 ```
+
+### Visual Language
+
+- **Generous white space**: 80–120px between major sections; breathing room = premium feel
+- **No loud gradients on content areas** — gradients only on the drawer and hero placeholder
+- **Thin line icons only** — `stroke-width: 1.5–2`, never filled icons
+- **Photography aesthetic**: warm interiors (Architectural Digest feel)
+- **No startup-y animations** — subtle transitions only; fade-in on scroll is acceptable
+- **Split layout pattern**: deep navy panel paired with content or photo
+- **Gold as a sharp accent**: use `var(--color-gold)` for active states, CTAs, underlines, and stat callouts — not as a background fill
 
 ---
 
@@ -170,17 +163,17 @@ All spacing, font sizes, and layout dimensions use CSS custom properties defined
 - Right: Login button (unauthenticated) / Add button + Profile button (authenticated)
 - Auto-hides on scroll down (mobile only) via `.header--hidden` class
 
-**Logo gradient:** Blue `#3B82F6` → sky `#7DD3FC`, diagonal triangle SVG
+**Logo:** Wordmark in Cormorant Garamond, `color: var(--color-navy)`; small diagonal triangle SVG in gold `var(--color-gold)`
 
-**Add button style:** Blue-tinted icon button (`.header-btn-add`)
+**Add button style:** Gold-tinted icon button (`.header-btn-add`)
 ```css
-background: var(--blue-100);
-color: var(--blue-600);
+background: rgba(201,168,76,0.12);
+color: var(--color-gold);
 ```
 
 **Login button style:**
 ```css
-background: #F94C66;  /* coral/pink — distinct from primary blue */
+background: var(--color-navy);
 color: #fff;
 border-radius: 8px;
 ```
@@ -190,7 +183,7 @@ border-radius: 8px;
 ### Left Drawer (`.drawer`)
 
 - Slides in from left over an overlay
-- Gradient background: `linear-gradient(90deg, #3B82F6 0%, #7DD3FC 100%)`
+- Background: `var(--color-navy)` — deep navy, solid
 - White text throughout
 - User avatar area at top (avatar icon + name + email)
 - Nav items with `data-nav` attribute for routing
@@ -205,14 +198,14 @@ border-radius: 8px;
 
 Mobile only (hidden at 769px+). Three items:
 1. **Home** — dashboard tab
-2. **Camera** (center, elevated) — floating circle button, `background: var(--blue-500)`, positioned `-20px` above nav baseline
+2. **Camera** (center, elevated) — floating circle button, `background: var(--color-navy)`, positioned `-20px` above nav baseline
 3. **Resources** — resources tab
 
-Active tab indicator: thin `3px` blue bar at top of nav item, animates with `scaleX`.
+Active tab indicator: thin `3px` gold bar at top of nav item, animates with `scaleX`.
 
 ```css
 .nav-item::before {
-  background: var(--blue-500);
+  background: var(--color-gold);
   /* transitions from scaleX(0) → scaleX(1) */
 }
 ```
@@ -228,7 +221,7 @@ Three-column grid on home screen. Each card has:
 - Progress bar at bottom
 - CSS custom property `--stat-color` drives the accent, label, and bar fill
 
-**Warn variant:** `.summary-stat-value--warn` — `color: var(--amber)`
+**Warn variant:** `.summary-stat-value--warn` — `color: #D97706`
 
 ---
 
@@ -236,11 +229,12 @@ Three-column grid on home screen. Each card has:
 
 Used at top of views before items appear.
 ```css
-background: linear-gradient(135deg, #EFF6FF 0%, #F0F9FF 100%);
+background: var(--color-bg);
+border: 1px solid var(--color-divider);
 border-radius: var(--radius);
 text-align: center;
 ```
-Icon (36px blue), title, subtitle. Responsive padding via `--hero-padding` token.
+Icon (36px gold `var(--color-gold)`), title in Cormorant Garamond navy, subtitle in DM Sans muted. Responsive padding via `--hero-padding` token.
 
 ---
 
@@ -248,9 +242,9 @@ Icon (36px blue), title, subtitle. Responsive padding via `--hero-padding` token
 
 Horizontally scrollable row, hidden scrollbar. Pill shape (`border-radius: 20px`).
 
-- Default: white background, `--gray-200` border, `--gray-600` text
-- Hover: `--blue-300` border, `--blue-500` text
-- Active: `--blue-500` background, white text
+- Default: white background, `var(--color-divider)` border, `var(--color-body)` text
+- Hover: `var(--color-gold)` border, `var(--color-navy)` text
+- Active: `var(--color-navy)` background, white text
 - Warning variant (`.room-chip--warning`): amber tones for duplicate-flagged rooms
 
 ---
@@ -263,9 +257,9 @@ Structure:
 ```
 .item-card
   img.item-card-thumb (4:3 aspect ratio) OR .item-card-thumb-placeholder
-  .item-card-name      — bold, navy, capitalized
-  .item-card-cost      — medium weight, --gray-700
-  .item-card-room      — blue pill badge
+  .item-card-name      — bold, var(--color-navy), capitalized
+  .item-card-cost      — medium weight, var(--color-body)
+  .item-card-room      — gold-tinted pill badge
   .item-card-year      — muted timestamp
   button.item-card-delete  — top-right, 26px circle, opacity 0.35 → 1 on hover
 ```
@@ -288,12 +282,12 @@ Bottom sheet that slides up from `translateY(100%)`.
 - Three internal states: **pick** (upload), **scanning** (spinner), **review** (editable list)
 
 **Upload area** (`.camera-pick-area`):
-- Dashed border, `--gray-200`
-- Hover: `--blue-300` border + `--blue-100` background
+- Dashed border, `var(--color-divider)`
+- Hover: `var(--color-gold)` border + `rgba(201,168,76,0.06)` background
 
 **Primary action button** (`.camera-action-btn`):
 ```css
-background: var(--blue-500);
+background: var(--color-navy);
 border-radius: var(--radius);
 font-weight: 600;
 width: 100%;
@@ -302,8 +296,8 @@ padding: 14px;
 
 **Scanning spinner** (`.camera-spinner`):
 ```css
-border: 3px solid var(--gray-200);
-border-top-color: var(--blue-500);
+border: 3px solid var(--color-divider);
+border-top-color: var(--color-gold);
 animation: camera-spin 0.75s linear infinite;
 ```
 
@@ -311,7 +305,7 @@ animation: camera-spin 0.75s linear infinite;
 
 ### Item Detail Sheet (`.item-sheet`)
 
-Bottom sheet for editing an item. Background `var(--gray-100)`, `border-radius: 24px 24px 0 0`.
+Bottom sheet for editing an item. Background `var(--color-bg)`, `border-radius: 24px 24px 0 0`.
 
 Structure:
 ```
@@ -328,18 +322,19 @@ Structure:
 **Field labels:**
 ```css
 font-size: 0.72rem;
-font-weight: 700;
+font-weight: 500;
 text-transform: uppercase;
 letter-spacing: 0.4px;
-color: var(--gray-500);
+color: var(--color-muted);
+font-family: 'DM Sans', sans-serif;
 ```
 
 **Inputs (`.item-sheet-input`):**
 ```css
-border: 1px solid var(--gray-200);
+border: 1px solid var(--color-divider);
 border-radius: 10px;
 background: var(--white);
-/* focus: border-color: var(--blue-500) */
+/* focus: border-color: var(--color-gold) */
 ```
 
 ---
@@ -350,13 +345,13 @@ Fixed overlay, black background. Supports:
 - Pinch-to-zoom (mobile)
 - Scroll-to-zoom (desktop)
 - Drag-to-pan when zoomed
-- YOLO bounding box overlay (`.photo-yolo-box`) in blue `var(--blue-500)`
+- YOLO bounding box overlay (`.photo-yolo-box`) in gold `var(--color-gold)`
 
 ---
 
 ### Empty State (`.empty-state`)
 
-Centered, 56px padding. Large muted icon (52px, `--gray-300`), bold navy heading, muted description.
+Centered, 56px padding. Large muted icon (52px, `var(--color-divider)`), bold navy heading in Cormorant Garamond, muted description in DM Sans.
 
 ---
 
@@ -402,7 +397,7 @@ All sheets follow this pattern:
 - **Nav indicator**: `0.2s cubic-bezier(0.34, 1.56, 0.64, 1)` (spring bounce)
 - **Camera button hover**: `transform: scale(1.06)`
 
-**No keyframe animations except** the camera spinner (`camera-spin`). No page transitions. No staggered reveals. Keep motion purposeful and minimal.
+**No keyframe animations except** the camera spinner (`camera-spin`) and subtle scroll-triggered fade-ins. No page transitions. No staggered reveals unless they serve a clear purpose. Keep motion purposeful and minimal.
 
 ---
 
@@ -499,16 +494,16 @@ User taps camera
 
 ## Relationship to Landing Page
 
-The landing page (`arcera_landing` or similar) is a **separate project** with a distinct design system:
+The landing page (`arcera_landing` or similar) is a **separate project** but shares the same design language:
 
 | | Frontend App | Landing Page |
 |---|---|---|
-| Colors | Blue + Navy | Gold + Cream + Navy |
-| Font | Inter | Cormorant Garamond + DM Sans |
-| Tone | Functional app | Estate/luxury marketing |
+| Colors | Gold + Cream + Navy | Gold + Cream + Navy |
+| Font | Cormorant Garamond + DM Sans + DM Mono | Cormorant Garamond + DM Sans |
+| Tone | Premium tool — functional but refined | Estate/luxury marketing |
 | Framework | Vanilla JS | React + Tailwind |
 
-Do not mix these design systems. The app should feel clean and utilitarian — a professional tool. The landing page sells the service; the app delivers it.
+The app and landing page share the same aesthetic identity. The app should feel like a premium, considered product — not generic SaaS. Heritage typography, warm neutrals, and gold accents carry through both.
 
 ---
 
