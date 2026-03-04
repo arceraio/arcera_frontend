@@ -102,7 +102,7 @@ export function render() {
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
-export function init(openCamera, navigate, user) {
+export function init(openCamera, navigate, user, openSettings) {
   const hamburgerBtn = document.getElementById('hamburgerBtn');
   const drawer = document.getElementById('drawer');
   const drawerOverlay = document.getElementById('drawerOverlay');
@@ -130,6 +130,11 @@ export function init(openCamera, navigate, user) {
   drawerOverlay.addEventListener('click', close);
   drawerClose.addEventListener('click', close);
 
+  drawer.querySelector('.drawer-header-user').addEventListener('click', () => {
+    close();
+    setTimeout(() => openSettings(), 300);
+  });
+
   drawer.querySelectorAll('[data-nav]').forEach(item => {
     item.addEventListener('click', async () => {
       const nav = item.dataset.nav;
@@ -152,6 +157,8 @@ export function init(openCamera, navigate, user) {
         navigate('items');
       } else if (nav === 'resources') {
         navigate('resources');
+      } else if (nav === 'settings') {
+        setTimeout(() => openSettings(), 300);
       }
     });
   });

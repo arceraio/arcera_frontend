@@ -34,7 +34,7 @@ supabase.auth.onAuthStateChange((_event, session) => {
     });
   }
 
-  initDrawer(openCamera, navigate, session.user);
+  initDrawer(openCamera, navigate, session.user, openSettings);
   initCamera(refresh);
   initItemSheet(refresh);
   initSettings();
