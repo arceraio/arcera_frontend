@@ -9,19 +9,13 @@ export function render() {
             <line x1="3" y1="18" x2="21" y2="18"/>
           </svg>
         </button>
-        <div class="logo">
-          <svg viewBox="0 0 40 40" fill="none">
-            <path d="M20 4L34 32H6L20 4Z" fill="url(#logoGrad)" opacity="0.85"/>
-            <path d="M10 28Q20 18 30 28" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-            <defs>
-              <linearGradient id="logoGrad" x1="6" y1="32" x2="34" y2="4">
-                <stop offset="0%" stop-color="#3B82F6"/>
-                <stop offset="100%" stop-color="#7DD3FC"/>
-              </linearGradient>
-            </defs>
-          </svg>
-          <span class="logo-text">ARCERA</span>
-        </div>
+        <button class="logo" id="logoBtn" aria-label="Go to home">
+          <img
+            src="/asset/logo/arcera-high-resolution-logo-transparent.png"
+            alt="Arcera"
+            class="logo-img"
+          />
+        </button>
       </div>
       <div class="header-right">
         <button class="header-btn header-btn-add" id="headerAddBtn" aria-label="Add item">

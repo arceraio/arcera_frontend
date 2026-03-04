@@ -48,6 +48,7 @@ supabase.auth.onAuthStateChange((_event, session) => {
 
   refresh();
 
+  document.getElementById('logoBtn').addEventListener('click', () => navigate('home'));
   document.getElementById('headerAddBtn').addEventListener('click', openCamera);
   document.getElementById('headerPersonBtn').addEventListener('click', openSettings);
 

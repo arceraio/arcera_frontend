@@ -51,6 +51,7 @@ export function init(refreshCb) {
     <div class="camera-sheet" id="cameraSheet">
       <div class="camera-sheet-handle"></div>
       <div class="camera-sheet-header">
+        <span></span>
         <span class="camera-sheet-title">Scan Items</span>
         <button class="camera-sheet-close" id="cameraClose" aria-label="Close">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">

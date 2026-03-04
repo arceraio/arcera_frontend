@@ -110,8 +110,13 @@
 
 /* ── Apply sizing tokens ── */
 
-.logo svg { width: var(--logo-svg); height: var(--logo-svg); }
-.logo-text { font-size: var(--logo-font); }
+.logo-img { height: 28px; }
+@media (min-width: 375px)  { .logo-img { height: 30px; } }
+@media (min-width: 480px)  { .logo-img { height: 32px; } }
+@media (min-width: 768px)  { .logo-img { height: 36px; } }
+@media (min-width: 1024px) { .logo-img { height: 38px; } }
+@media (min-width: 1440px) { .logo-img { height: 40px; } }
+
 .drawer { width: var(--drawer-width); }
 
 /* ── Navigation visibility ── */

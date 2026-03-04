@@ -81,13 +81,15 @@ body {
 .logo {
   display: flex;
   align-items: center;
-  gap: 8px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
 }
-.logo-text {
-  font-family: 'Cormorant Garamond', serif;
-  font-weight: 600;
-  color: var(--color-navy);
-  letter-spacing: 1.5px;
+.logo-img {
+  width: auto;
+  display: block;
+  object-fit: contain;
 }
 
 .header-right {
@@ -757,9 +759,11 @@ body {
   flex-shrink: 0;
 }
 .camera-sheet-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-weight: 600;
-  font-size: 1.1rem;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.9px;
+  text-transform: uppercase;
   color: var(--color-navy);
   text-align: center;
 }
@@ -796,7 +800,8 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 16px;
+  gap: 12px;
+  padding: 32px 24px;
   border: 1.5px dashed var(--color-divider);
   border-radius: var(--radius);
   cursor: pointer;
@@ -855,7 +860,11 @@ body {
   flex-shrink: 0;
 }
 .camera-action-btn:hover:not(:disabled) { background: #1a2f45; }
-.camera-action-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.camera-action-btn:disabled {
+  background: var(--color-divider);
+  color: var(--color-muted);
+  cursor: not-allowed;
+}
 
 /* Scanning / loading screen */
 
