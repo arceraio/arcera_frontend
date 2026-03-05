@@ -259,11 +259,11 @@ body {
   padding-top: 12px;
 }
 .drawer-section-title {
-  font-family: var(--font-sans);
+  font-family: var(--font-mono);
   font-size: 0.62rem;
-  font-weight: 700;
+  font-weight: 300;
   text-transform: uppercase;
-  letter-spacing: 0.7px;
+  letter-spacing: 0.2em;
   color: rgba(255,255,255,0.35);
   padding: 0 24px 6px;
 }
@@ -343,11 +343,12 @@ body {
 }
 
 .summary-stat-label {
+  font-family: var(--font-mono);
   font-size: 0.62rem;
-  font-weight: 500;
+  font-weight: 300;
   color: var(--stat-color, var(--color-gold));
   text-transform: uppercase;
-  letter-spacing: 0.7px;
+  letter-spacing: 0.2em;
 }
 
 .summary-stat-value {
@@ -849,9 +850,10 @@ body {
 .camera-pick-icon svg { width: 32px; height: 32px; color: var(--color-muted); }
 
 .camera-pick-label {
+  font-family: var(--font-mono);
   font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-weight: 300;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--color-body);
 }
@@ -1121,11 +1123,12 @@ body {
   gap: 6px;
 }
 .item-sheet-label {
+  font-family: var(--font-mono);
   font-size: 0.72rem;
-  font-weight: 500;
+  font-weight: 300;
   color: var(--color-muted);
   text-transform: uppercase;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.22em;
 }
 .item-sheet-input {
   font-family: inherit;
@@ -1281,11 +1284,12 @@ body {
 .camera-field { display: flex; flex-direction: column; gap: 4px; }
 .camera-field-room { grid-column: span 2; }
 .camera-field label {
+  font-family: var(--font-mono);
   font-size: 0.7rem;
-  font-weight: 500;
+  font-weight: 300;
   color: var(--color-muted);
   text-transform: uppercase;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.22em;
 }
 
 .camera-input,
@@ -1422,9 +1426,10 @@ body {
   padding: 20px 20px 8px;
 }
 .settings-section-label {
+  font-family: var(--font-mono);
   font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
+  font-weight: 300;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--color-muted);
   margin-bottom: 14px;
