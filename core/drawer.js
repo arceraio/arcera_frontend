@@ -1,3 +1,5 @@
+import { supabase } from './supabaseClient.js';
+
 export function render() {
   return `
     <div class="drawer-overlay" id="drawerOverlay"></div>
@@ -159,6 +161,9 @@ export function init(openCamera, navigate, user, openSettings) {
         navigate('resources');
       } else if (nav === 'settings') {
         setTimeout(() => openSettings(), 300);
+      } else if (nav === 'logout') {
+        await supabase.auth.signOut();
+        window.location.href = 'https://arcera.io';
       }
     });
   });

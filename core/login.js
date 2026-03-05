@@ -77,7 +77,10 @@ export function renderLogin() {
             </div>
           </form>
         </div>
-        <p class="login-footer-note">Serving Los Angeles, CA</p>
+        <p class="login-footer-note">
+          <span class="login-footer-label">Serving</span>
+          <span class="login-footer-locations">Los Angeles&nbsp;&bull;&nbsp;Brentwood&nbsp;&bull;&nbsp;Malibu&nbsp;&bull;&nbsp;Pacific Palisades&nbsp;&bull;&nbsp;Hancock Park&nbsp;&bull;&nbsp;Calabasas</span>
+        </p>
       </div>
     `;
 
