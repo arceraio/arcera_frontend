@@ -251,7 +251,7 @@ function renderSheet() {
           ${ROOMS.map((r, i) => `<option value="${i + 1}"${it.room_id === i + 1 ? ' selected' : ''}>${r}</option>`).join('')}
         </select>
       </div>
-      <button class="item-sheet-save" id="itemSheetSave">Save Changes</button>
+      <button class="item-sheet-save" id="itemSheetSave"><span>Save Changes</span></button>
       <button class="item-sheet-delete" id="itemSheetDelete">Delete Item</button>
     </div>
   `;

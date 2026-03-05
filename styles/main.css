@@ -1151,15 +1151,26 @@ body {
   background: var(--color-navy);
   color: var(--white);
   border: none;
-  border-radius: var(--radius);
   font-family: inherit;
   font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
   margin-top: 4px;
-  transition: opacity 0.15s;
+  position: relative;
+  overflow: hidden;
+  transition: color 0.3s ease;
 }
-.item-sheet-save:hover { opacity: 0.88; }
+.item-sheet-save::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--color-gold);
+  transform: translateX(-101%);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.item-sheet-save:hover::before { transform: translateX(0); }
+.item-sheet-save:hover { color: var(--color-navy); }
+.item-sheet-save span { position: relative; z-index: 1; }
 
 .item-sheet-delete {
   width: 100%;
