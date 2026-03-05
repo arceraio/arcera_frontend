@@ -44,7 +44,7 @@ body {
   align-items: center;
   padding: var(--header-padding);
   background: var(--white);
-  border-bottom: 1px solid var(--color-divider);
+  border-bottom: 1px solid rgba(201,168,76,0.15);
   position: sticky;
   top: 0;
   z-index: 100;
