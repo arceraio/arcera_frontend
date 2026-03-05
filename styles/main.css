@@ -12,11 +12,16 @@
   --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
   --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
   --radius: 12px;
+  --font-serif: var(--font-serif);
+  --font-sans:  var(--font-sans);
+  --font-mono:  var(--font-mono);
+  --gold-hover: #dbb95e;
+  --footer-bg:  #070f18;
 }
 
 html, body {
   height: 100%;
-  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, sans-serif;
   background: var(--color-bg);
   color: var(--color-body);
   -webkit-font-smoothing: antialiased;
@@ -213,7 +218,7 @@ body {
   min-width: 0;
 }
 .drawer-user-name {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: var(--font-serif);
   font-size: 1.15rem;
   font-weight: 600;
   color: var(--white);
@@ -242,7 +247,7 @@ body {
   padding-top: 12px;
 }
 .drawer-section-title {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-sans);
   font-size: 0.62rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -293,7 +298,7 @@ body {
 }
 
 .section-title {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: var(--font-serif);
   font-weight: 600;
   color: var(--color-navy);
   margin-bottom: 20px;
@@ -336,7 +341,7 @@ body {
 .summary-stat-value {
   font-size: 2.5rem;
   font-weight: 400;
-  font-family: 'DM Mono', monospace;
+  font-family: var(--font-mono);
   color: var(--color-navy);
   line-height: 1;
   font-variant-numeric: tabular-nums;
@@ -391,7 +396,7 @@ body {
 }
 
 .hero-title {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: var(--font-serif);
   font-size: var(--hero-title-font, 1.45rem);
   font-weight: 600;
   color: var(--color-navy);
@@ -518,7 +523,7 @@ body {
 }
 
 .item-card-cost {
-  font-family: 'DM Mono', monospace;
+  font-family: var(--font-mono);
   font-size: var(--card-cost-font, 1rem);
   font-weight: 400;
   color: var(--color-body);
@@ -607,7 +612,7 @@ body {
   margin-bottom: 18px;
 }
 .empty-state p {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: var(--font-serif);
   font-size: 1.25rem;
   font-weight: 600;
   color: var(--color-navy);
@@ -759,7 +764,7 @@ body {
   flex-shrink: 0;
 }
 .camera-sheet-title {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-sans);
   font-weight: 700;
   font-size: 0.72rem;
   letter-spacing: 0.9px;
@@ -880,7 +885,7 @@ body {
 }
 .camera-scanning p { font-size: 0.9rem; color: var(--color-muted); }
 .camera-noresult-title {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: var(--font-serif);
   font-weight: 600;
   color: var(--color-navy) !important;
 }
@@ -1056,7 +1061,7 @@ body {
   gap: 6px;
 }
 .item-sheet-hero-name {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: var(--font-serif);
   font-size: 1.5rem;
   font-weight: 600;
   color: #fff;
@@ -1351,7 +1356,7 @@ body {
   letter-spacing: 0.04em;
 }
 .settings-title {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: var(--font-serif);
   font-size: 1.05rem;
   font-weight: 600;
   color: var(--color-navy);
@@ -1639,7 +1644,7 @@ body {
   align-items: center;
   justify-content: center;
   padding: 40px 20px;
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-sans);
   color: #2C2C2C;
   -webkit-font-smoothing: antialiased;
 }
@@ -1670,7 +1675,7 @@ body {
 .login-wordmark {
   position: relative;
   z-index: 1;
-  font-family: 'Cormorant Garamond', serif;
+  font-family: var(--font-serif);
   font-weight: 300;
   font-size: 13px;
   letter-spacing: 0.35em;
@@ -1714,7 +1719,7 @@ body {
 .login-card::after  { bottom: 16px; right: 16px; border-width: 0 1px 1px 0; }
 
 .login-heading {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: var(--font-serif);
   font-weight: 600;
   font-size: 28px;
   letter-spacing: 0.12em;
@@ -1775,7 +1780,7 @@ body {
   border-bottom: 1px solid #E0DBD4;
   outline: none;
   padding: 8px 0 10px;
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-sans);
   font-size: 15px;
   font-weight: 300;
   color: #2C2C2C;
@@ -1794,7 +1799,7 @@ body {
   color: #6B7280;
   font-size: 11px;
   letter-spacing: 0.08em;
-  font-family: 'DM Mono', monospace;
+  font-family: var(--font-mono);
   font-weight: 300;
   transition: color 0.2s;
 }
@@ -1868,7 +1873,7 @@ body {
   color: #F9F7F4;
   border: none;
   cursor: pointer;
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-sans);
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.2em;
@@ -1911,7 +1916,7 @@ body {
   background: none;
   border: none;
   cursor: pointer;
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-sans);
   padding: 0;
   text-decoration: none;
 }
@@ -1965,7 +1970,7 @@ body {
   background: transparent;
   border: 1px solid #E0DBD4;
   cursor: pointer;
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-sans);
   font-size: 12px;
   font-weight: 400;
   color: #2C2C2C;
@@ -1983,12 +1988,26 @@ body {
   z-index: 1;
   margin-top: 28px;
   font-size: 11px;
-  color: rgba(249,247,244,0.3);
-  letter-spacing: 0.06em;
   text-align: center;
   opacity: 0;
   animation: loginFadeUp 0.6s ease forwards;
   animation-delay: 0.8s;
+}
+.login-footer-label {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--color-gold);
+  margin-right: 6px;
+}
+.login-footer-locations {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  color: rgba(249,247,244,0.65);
 }
 
 @keyframes loginFadeUp {
