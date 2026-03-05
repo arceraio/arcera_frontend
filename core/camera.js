@@ -103,7 +103,7 @@ function showPickScreen() {
       <span class="camera-pick-sub">JPG, PNG, WEBP</span>
       <input type="file" id="cameraFileInput" accept="image/*" style="display:none">
     </label>
-    <button class="camera-action-btn" id="cameraScanBtn" disabled>Scan for Items</button>
+    <button class="camera-action-btn" id="cameraScanBtn" disabled><span>Scan for Items</span></button>
   `);
 
   document.getElementById('cameraFileInput').addEventListener('change', e => {
@@ -143,7 +143,7 @@ async function doScan() {
     setBody(`
       <div class="camera-scanning">
         <p class="camera-error">Could not reach the server. Is it running?</p>
-        <button class="camera-action-btn" id="cameraRetryBtn" style="margin-top:16px">Try Again</button>
+        <button class="camera-action-btn" id="cameraRetryBtn" style="margin-top:16px"><span>Try Again</span></button>
       </div>
     `);
     document.getElementById('cameraRetryBtn').addEventListener('click', showPickScreen);
@@ -202,7 +202,7 @@ async function showReviewScreen(detections) {
       <div class="camera-scanning">
         <p class="camera-noresult-title">No items detected</p>
         <p class="camera-error">Try a clearer photo with visible objects in frame.</p>
-        <button class="camera-action-btn" id="cameraRetryBtn" style="margin-top:16px">Try Again</button>
+        <button class="camera-action-btn" id="cameraRetryBtn" style="margin-top:16px"><span>Try Again</span></button>
       </div>
     `);
     document.getElementById('cameraRetryBtn').addEventListener('click', showPickScreen);
@@ -251,7 +251,7 @@ async function showReviewScreen(detections) {
   setBody(`
     <div class="camera-review-list">${rows}</div>
     <button class="camera-action-btn" id="cameraStoreBtn">
-      Add ${detections.length} Item${detections.length !== 1 ? 's' : ''} to Inventory
+      <span>Add ${detections.length} Item${detections.length !== 1 ? 's' : ''} to Inventory</span>
     </button>
   `);
 
@@ -261,10 +261,10 @@ async function showReviewScreen(detections) {
       const count = document.querySelectorAll('.camera-item-row').length;
       const storeBtn = document.getElementById('cameraStoreBtn');
       if (count === 0) {
-        storeBtn.textContent = 'No Items Selected';
+        storeBtn.querySelector('span').textContent = 'No Items Selected';
         storeBtn.disabled = true;
       } else {
-        storeBtn.textContent = `Add ${count} Item${count !== 1 ? 's' : ''} to Inventory`;
+        storeBtn.querySelector('span').textContent = `Add ${count} Item${count !== 1 ? 's' : ''} to Inventory`;
       }
     });
   });

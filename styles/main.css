@@ -868,15 +868,26 @@ body {
   background: var(--color-navy);
   color: var(--white);
   border: none;
-  border-radius: var(--radius);
   font-family: inherit;
   font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.15s, opacity 0.15s;
   flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+  transition: color 0.3s ease;
 }
-.camera-action-btn:hover:not(:disabled) { background: #1a2f45; }
+.camera-action-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--color-gold);
+  transform: translateX(-101%);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.camera-action-btn:hover:not(:disabled)::before { transform: translateX(0); }
+.camera-action-btn:hover:not(:disabled) { color: var(--color-navy); }
+.camera-action-btn span { position: relative; z-index: 1; }
 .camera-action-btn:disabled {
   background: var(--color-divider);
   color: var(--color-muted);
