@@ -133,9 +133,21 @@ body {
   font-weight: 600;
   color: #fff;
   background: var(--color-navy);
-  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  transition: color 0.3s ease;
 }
-.header-btn-login:hover { background: #1a2f45; opacity: 1; }
+.header-btn-login::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--color-gold);
+  transform: translateX(-101%);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.header-btn-login:hover::before { transform: translateX(0); }
+.header-btn-login:hover { color: var(--color-navy); }
+.header-btn-login span { position: relative; z-index: 1; }
 
 /* ── Hamburger Drawer ── */
 
