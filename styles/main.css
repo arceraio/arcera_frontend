@@ -316,6 +316,17 @@ body {
   margin-bottom: 20px;
 }
 
+.section-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 300;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+  display: block;
+  margin-bottom: 6px;
+}
+
 /* ── Summary Stats ── */
 
 .summary-stats {

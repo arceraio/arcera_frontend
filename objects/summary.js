@@ -96,6 +96,7 @@ export function render(items) {
   const dupPct     = Math.round((duplicates / total)       * 100);
 
   return `
+    <span class="section-eyebrow">Overview</span>
     <div class="summary-stats">
 
       <div class="summary-stat" style="
