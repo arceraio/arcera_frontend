@@ -78,21 +78,47 @@
   }
 }
 
+/* iPad portrait (820px+) — iPad Air, iPad mini 6 */
+@media (min-width: 820px) {
+  :root {
+    --header-padding: 18px 36px;
+    --content-padding: 36px 36px 36px;
+    --drawer-width: 280px;
+    --hero-padding: 44px 48px;
+    --hero-title-font: 1.55rem;
+    --hero-subtitle-font: 1rem;
+    --chip-font: 0.88rem;
+    --grid-columns: repeat(2, 1fr);
+    --grid-gap: 20px;
+    --card-inner-padding: 22px;
+    --card-name-font: 1.05rem;
+    --card-cost-font: 1.2rem;
+  }
+}
+
 /* Small desktops (1024px+) */
 @media (min-width: 1024px) {
   :root {
-    --header-padding: 16px 40px;
-    --content-padding: 36px 40px 36px;
+    --header-padding: 18px 0px;
+    --content-padding: 40px 48px 40px;
     --drawer-width: 320px;
     --hero-padding: 40px 44px;
     --hero-title-font: 1.45rem;
     --hero-subtitle-font: 0.95rem;
     --chip-font: 0.88rem;
-    --grid-columns: repeat(4, 1fr);
+    --grid-columns: repeat(3, 1fr);
     --grid-gap: 18px;
     --card-inner-padding: 22px;
     --card-name-font: 1.02rem;
     --card-cost-font: 1.2rem;
+  }
+}
+
+/* iPad Pro 12.9" (1194px+) */
+@media (min-width: 1194px) {
+  :root {
+    --grid-columns: repeat(3, 1fr);
+    --grid-gap: 24px;
   }
 }
 
@@ -121,11 +147,31 @@
 
 /* ── Navigation visibility ── */
 
-@media (max-width: 768px) {
+/* Mobile only (≤819px): hide hamburger, show bottom nav */
+@media (max-width: 819px) {
   .hamburger-btn { display: none; }
 }
 
-@media (min-width: 769px) {
+/* iPad+ (820px+): hide bottom nav and hamburger — persistent sidebar used instead */
+@media (min-width: 820px) {
   .bottom-nav { display: none; }
-  :root { --content-padding: 32px 32px 32px; }
+  .hamburger-btn { display: none; }
+  :root { --content-padding: 36px 36px 36px; }
+}
+
+@media (min-width: 1024px) {
+  :root { --content-padding: 40px 48px 40px; }
+}
+
+/* ── Safe area insets (iPhone Dynamic Island, home indicator) ── */
+/* Requires viewport-fit=cover in the HTML meta tag */
+
+.bottom-nav {
+  padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+}
+
+@media (max-width: 819px) {
+  .main-content {
+    padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px));
+  }
 }
