@@ -37,6 +37,33 @@ body {
   min-height: 100vh;
 }
 
+/* On iPad+ the drawer sits left, content scrolls right */
+@media (min-width: 820px) {
+  body {
+    flex-direction: row;
+    height: 100vh;
+    overflow: hidden;
+  }
+}
+
+/* ── App Shell ── */
+
+.app-shell-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  height: 100%;
+}
+
+@media (max-width: 819px) {
+  .app-shell-main {
+    /* On mobile, this wrapper just stacks normally */
+    flex: 1;
+  }
+}
+
 /* ── Header ── */
 
 .header {
@@ -179,6 +206,28 @@ body {
   box-shadow: var(--shadow-lg);
 }
 .drawer.open { transform: translateX(0); }
+
+/* Persistent sidebar on iPad+ */
+@media (min-width: 820px) {
+  .drawer {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    transform: none !important;
+    transition: none;
+    flex-shrink: 0;
+    box-shadow: none;
+    border-right: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .drawer-overlay {
+    display: none !important;
+  }
+
+  .drawer-close {
+    display: none;
+  }
+}
 
 .drawer-header {
   padding: 32px 24px 24px;

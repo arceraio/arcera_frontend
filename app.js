@@ -14,9 +14,11 @@ supabase.auth.onAuthStateChange((_event, session) => {
 
   document.body.innerHTML = `
     ${renderDrawer()}
-    ${renderHeader()}
-    <main class="main-content"></main>
-    ${renderFooter()}
+    <div class="app-shell-main">
+      ${renderHeader()}
+      <main class="main-content"></main>
+      ${renderFooter()}
+    </div>
   `;
 
   async function refresh() {
@@ -39,7 +41,7 @@ supabase.auth.onAuthStateChange((_event, session) => {
   initItemSheet(refresh);
   initSettings();
 
-  if (window.matchMedia('(max-width: 768px)').matches) {
+  if (window.matchMedia('(max-width: 819px)').matches) {
     const hdr = document.querySelector('.header');
     const main = document.querySelector('.main-content');
     const existingPt = parseInt(getComputedStyle(main).paddingTop, 10);
@@ -83,7 +85,7 @@ supabase.auth.onAuthStateChange((_event, session) => {
     const OFFSET = 60;   // don't hide until scrolled past 60px
 
     window.addEventListener('scroll', () => {
-      if (!window.matchMedia('(max-width: 768px)').matches) return;
+      if (!window.matchMedia('(max-width: 819px)').matches) return;
       const y = window.scrollY;
       if (Math.abs(y - lastY) < DELTA) return;
       const hiding = y > lastY && y > OFFSET;
