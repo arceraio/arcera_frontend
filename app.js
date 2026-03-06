@@ -84,14 +84,17 @@ supabase.auth.onAuthStateChange((_event, session) => {
     const DELTA = 6;     // ignore micro-jitter
     const OFFSET = 60;   // don't hide until scrolled past 60px
 
-    window.addEventListener('scroll', () => {
-      if (!window.matchMedia('(max-width: 819px)').matches) return;
-      const y = window.scrollY;
-      if (Math.abs(y - lastY) < DELTA) return;
-      const hiding = y > lastY && y > OFFSET;
-      header.classList.toggle('header--hidden', hiding);
-      bottomNav.classList.toggle('bottom-nav--hidden', hiding);
-      lastY = y;
-    }, { passive: true });
+    const scrollEl = document.querySelector('.app-shell-main');
+    if (scrollEl) {
+      scrollEl.addEventListener('scroll', () => {
+        if (!window.matchMedia('(max-width: 819px)').matches) return;
+        const y = scrollEl.scrollTop;
+        if (Math.abs(y - lastY) < DELTA) return;
+        const hiding = y > lastY && y > OFFSET;
+        header.classList.toggle('header--hidden', hiding);
+        bottomNav.classList.toggle('bottom-nav--hidden', hiding);
+        lastY = y;
+      }, { passive: true });
+    }
   }
 });
