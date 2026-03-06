@@ -144,6 +144,28 @@ body {
 .header-btn-add:hover { background: rgba(201,168,76,0.22); }
 .header-btn-add svg { color: var(--color-gold); }
 
+.header-btn-add-label {
+  display: none;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-gold);
+  letter-spacing: 0.04em;
+  font-family: var(--font-sans);
+}
+
+@media (min-width: 820px) {
+  .header-btn-add {
+    width: auto;
+    padding: 0 14px;
+    gap: 6px;
+    flex-direction: row;
+    align-items: center;
+  }
+  .header-btn-add-label {
+    display: block;
+  }
+}
+
 .header-btn-person svg { color: var(--color-muted); }
 
 .header-btn-login {
