@@ -527,7 +527,7 @@ body {
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .hero-scan-btn:hover::before { transform: translateX(0); }
-.hero-scan-btn:hover { color: var(--color-navy); background: var(--color-navy); }
+.hero-scan-btn:hover { color: var(--color-navy); }
 .hero-scan-btn span { position: relative; z-index: 1; }
 .hero-scan-btn svg { position: relative; z-index: 1; width: 13px; height: 13px; }
 
