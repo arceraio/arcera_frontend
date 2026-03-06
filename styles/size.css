@@ -117,7 +117,6 @@
 /* iPad Pro 12.9" (1194px+) */
 @media (min-width: 1194px) {
   :root {
-    --grid-columns: repeat(3, 1fr);
     --grid-gap: 24px;
   }
 }
@@ -156,22 +155,28 @@
 @media (min-width: 820px) {
   .bottom-nav { display: none; }
   .hamburger-btn { display: none; }
-  :root { --content-padding: 36px 36px 36px; }
-}
-
-@media (min-width: 1024px) {
-  :root { --content-padding: 40px 48px 40px; }
 }
 
 /* ── Safe area insets (iPhone Dynamic Island, home indicator) ── */
 /* Requires viewport-fit=cover in the HTML meta tag */
 
-.bottom-nav {
-  padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+/* Safe-area augmented bottom padding — matches --content-padding bottom value at each breakpoint */
+.main-content {
+  padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px));
+}
+@media (min-width: 375px) and (max-width: 819px) {
+  .main-content {
+    padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+  }
+}
+@media (min-width: 480px) and (max-width: 819px) {
+  .main-content {
+    padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px));
+  }
 }
 
 @media (max-width: 819px) {
-  .main-content {
-    padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px));
+  .bottom-nav {
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
   }
 }
