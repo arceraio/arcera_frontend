@@ -163,7 +163,7 @@ export function init(openCamera, navigate, user, openSettings) {
         setTimeout(() => openSettings(), 300);
       } else if (nav === 'logout') {
         await supabase.auth.signOut();
-        window.location.href = 'https://arcera.io';
+        window.location.href = 'https://www.arcera.io';
       }
     });
   });
