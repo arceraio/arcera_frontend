@@ -381,7 +381,7 @@ body {
 
 .section-eyebrow {
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 300;
   letter-spacing: 0.3em;
   text-transform: uppercase;
@@ -426,7 +426,7 @@ body {
 }
 
 .summary-stat-value {
-  font-size: 2.5rem;
+  font-size: clamp(1.8rem, 5vw, 2.5rem);
   font-weight: 400;
   font-family: var(--font-mono);
   color: var(--color-navy);

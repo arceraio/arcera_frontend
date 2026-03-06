@@ -9,8 +9,8 @@
   --logo-font: 1rem;
   --drawer-width: 260px;
   --hero-padding: 24px 16px;
-  --hero-title-font: 1.05rem;
-  --hero-subtitle-font: 0.82rem;
+  --hero-title-font: 1.25rem;
+  --hero-subtitle-font: 0.9rem;
   --chip-font: 0.78rem;
   --grid-columns: repeat(2, 1fr);
   --grid-gap: 10px;
@@ -28,8 +28,8 @@
     --logo-svg: 30px;
     --logo-font: 1.08rem;
     --hero-padding: 26px 20px;
-    --hero-title-font: 1.12rem;
-    --hero-subtitle-font: 0.85rem;
+    --hero-title-font: 1.35rem;
+    --hero-subtitle-font: 0.93rem;
     --chip-font: 0.8rem;
     --grid-gap: 12px;
     --card-inner-padding: 16px;
@@ -48,8 +48,8 @@
     --logo-font: 1.15rem;
     --drawer-width: 280px;
     --hero-padding: 30px 28px;
-    --hero-title-font: 1.2rem;
-    --hero-subtitle-font: 0.88rem;
+    --hero-title-font: 1.45rem;
+    --hero-subtitle-font: 0.96rem;
     --chip-font: 0.82rem;
     --grid-columns: repeat(2, 1fr);
     --grid-gap: 14px;
@@ -67,8 +67,8 @@
     --nav-padding: 10px 24px 16px;
     --drawer-width: 300px;
     --hero-padding: 36px 36px;
-    --hero-title-font: 1.35rem;
-    --hero-subtitle-font: 0.92rem;
+    --hero-title-font: 1.6rem;
+    --hero-subtitle-font: 1rem;
     --chip-font: 0.85rem;
     --grid-columns: repeat(3, 1fr);
     --grid-gap: 16px;
@@ -85,8 +85,8 @@
     --content-padding: 36px 36px 36px;
     --drawer-width: 280px;
     --hero-padding: 44px 48px;
-    --hero-title-font: 1.55rem;
-    --hero-subtitle-font: 1rem;
+    --hero-title-font: 1.75rem;
+    --hero-subtitle-font: 1.02rem;
     --chip-font: 0.88rem;
     --grid-columns: repeat(2, 1fr);
     --grid-gap: 20px;
@@ -103,7 +103,7 @@
     --content-padding: 40px 48px 40px;
     --drawer-width: 320px;
     --hero-padding: 40px 44px;
-    --hero-title-font: 1.45rem;
+    --hero-title-font: 1.85rem;
     --hero-subtitle-font: 0.95rem;
     --chip-font: 0.88rem;
     --grid-columns: repeat(3, 1fr);
@@ -127,7 +127,7 @@
     --content-padding: 40px 48px 40px;
     --header-padding: 18px 48px;
     --hero-padding: 44px 48px;
-    --hero-title-font: 1.5rem;
+    --hero-title-font: 2rem;
     --grid-gap: 20px;
     --card-inner-padding: 24px;
   }
