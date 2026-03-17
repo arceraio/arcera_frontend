@@ -12,6 +12,7 @@ export async function apiFetch(path, options = {}) {
   const headers = { ...(options.headers || {}) };
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
+    console.log('[apiFetch] token (first 40 chars):', token.slice(0, 40));
   } else {
     console.warn('[apiFetch] No token — request will be unauthenticated', path);
   }
