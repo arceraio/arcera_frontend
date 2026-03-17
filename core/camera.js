@@ -104,7 +104,7 @@ function showPickScreen() {
       </div>
       <span id="cameraPickLabel" class="camera-pick-label">Tap to select photos</span>
       <span class="camera-pick-sub">JPG, PNG, WEBP · one or more photos</span>
-      <input type="file" id="cameraFileInput" accept="image/*" multiple style="display:none">
+      <input type="file" id="cameraFileInput" accept=".jpg,.jpeg,.png,.webp" multiple style="display:none">
     </label>
     <button class="camera-action-btn" id="cameraScanBtn" disabled><span>Scan for Items</span></button>
   `);

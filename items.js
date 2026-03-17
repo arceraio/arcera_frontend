@@ -59,9 +59,16 @@ function bindMainEvents() {
 async function loadItems() {
   try {
     const res = await apiFetch('/items');
-    const data = await res.json();
-    allItems = data.items || [];
-  } catch {
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      console.error('[loadItems] API error', res.status, err);
+      allItems = [];
+    } else {
+      const data = await res.json();
+      allItems = data.items || [];
+    }
+  } catch (e) {
+    console.error('[loadItems] fetch failed', e);
     allItems = [];
   }
   renderMain();
