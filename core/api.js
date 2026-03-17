@@ -10,6 +10,10 @@ async function getToken() {
 export async function apiFetch(path, options = {}) {
   const token = await getToken();
   const headers = { ...(options.headers || {}) };
-  if (token) headers['Authorization'] = `Bearer ${token}`;
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  } else {
+    console.warn('[apiFetch] No token — request will be unauthenticated', path);
+  }
   return fetch(`${API}${path}`, { ...options, headers });
 }
