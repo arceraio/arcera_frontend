@@ -1,6 +1,6 @@
 import { render as renderSummary } from './objects/summary.js';
 import { render as renderItemsList } from './objects/items-list.js';
-import { apiFetch, API } from './core/api.js';
+import { apiFetch } from './core/api.js';
 
 let allItems = [];
 let roomFilter = 0;
@@ -60,10 +60,7 @@ async function loadItems() {
   try {
     const res = await apiFetch('/items');
     const data = await res.json();
-    allItems = (data.items || []).map(it => ({
-      ...it,
-      crop_url: it.crop_url ? `${API}${it.crop_url}` : null,
-    }));
+    allItems = data.items || [];
   } catch {
     allItems = [];
   }

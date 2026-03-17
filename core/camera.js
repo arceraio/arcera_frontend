@@ -41,7 +41,7 @@ const HOUSEHOLD_CLASS_IDS = new Set([
 import { apiFetch } from './api.js';
 
 let onRefresh = null;
-let currentFile = null;
+let currentFiles = [];
 
 export function init(refreshCb) {
   onRefresh = refreshCb;
@@ -76,7 +76,7 @@ export function init(refreshCb) {
 export { openModal as open };
 
 function openModal() {
-  currentFile = null;
+  currentFiles = [];
   document.getElementById('cameraOverlay').classList.add('open');
   document.getElementById('cameraSheet').classList.add('open');
   showPickScreen();
@@ -102,18 +102,19 @@ function showPickScreen() {
           <circle cx="12" cy="13" r="4"/>
         </svg>
       </div>
-      <span id="cameraPickLabel" class="camera-pick-label">Tap to select a photo</span>
-      <span class="camera-pick-sub">JPG, PNG, WEBP</span>
-      <input type="file" id="cameraFileInput" accept="image/*" style="display:none">
+      <span id="cameraPickLabel" class="camera-pick-label">Tap to select photos</span>
+      <span class="camera-pick-sub">JPG, PNG, WEBP · one or more photos</span>
+      <input type="file" id="cameraFileInput" accept="image/*" multiple style="display:none">
     </label>
     <button class="camera-action-btn" id="cameraScanBtn" disabled><span>Scan for Items</span></button>
   `);
 
   document.getElementById('cameraFileInput').addEventListener('change', e => {
-    const file = e.target.files[0];
-    if (!file) return;
-    currentFile = file;
-    document.getElementById('cameraPickLabel').textContent = file.name;
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+    currentFiles = files;
+    document.getElementById('cameraPickLabel').textContent =
+      files.length === 1 ? files[0].name : `${files.length} photos selected`;
     document.getElementById('cameraScanBtn').disabled = false;
   });
 
@@ -123,25 +124,44 @@ function showPickScreen() {
 /* ── Step 2: Upload + Detect ── */
 
 async function doScan() {
-  if (!currentFile) return;
+  if (!currentFiles.length) return;
 
+  const plural = currentFiles.length > 1;
   setBody(`
     <div class="camera-scanning">
       <div class="camera-spinner"></div>
-      <p>Scanning your photo…</p>
+      <p>Scanning your photo${plural ? 's' : ''}…</p>
     </div>
   `);
 
-  const form = new FormData();
-  form.append('image', currentFile);
-
-  let detections = [];
+  let scanResults = [];
 
   try {
-    await apiFetch('/upload', { method: 'POST', body: form });
-    const res = await apiFetch('/detect', { method: 'POST' });
-    const data = await res.json();
-    detections = (data.detections || []).filter(d => HOUSEHOLD_CLASS_IDS.has(d.class_id));
+    if (currentFiles.length === 1) {
+      // Single image flow
+      const form = new FormData();
+      form.append('image', currentFiles[0]);
+      await apiFetch('/upload', { method: 'POST', body: form });
+      const res = await apiFetch('/detect', { method: 'POST' });
+      const data = await res.json();
+      scanResults = [{
+        localPath: data.path,
+        storagePath: null,
+        detections: data.detections || [],
+      }];
+    } else {
+      // Multi-image flow
+      const form = new FormData();
+      currentFiles.forEach(f => form.append('images', f));
+      await apiFetch('/multi-upload', { method: 'POST', body: form });
+      const res = await apiFetch('/multiscan', { method: 'POST' });
+      const data = await res.json();
+      scanResults = (data.results || []).map(r => ({
+        localPath: r.local_path,
+        storagePath: r.storage_path,
+        detections: r.detections || [],
+      }));
+    }
   } catch {
     setBody(`
       <div class="camera-scanning">
@@ -153,7 +173,14 @@ async function doScan() {
     return;
   }
 
-  showReviewScreen(detections);
+  // Filter to household items and attach path metadata to each detection
+  const allDetections = scanResults.flatMap((r, i) =>
+    r.detections
+      .filter(d => HOUSEHOLD_CLASS_IDS.has(d.class_id))
+      .map(d => ({ ...d, localPath: r.localPath, storagePath: r.storagePath, fileIndex: i }))
+  );
+
+  showReviewScreen(allDetections);
 }
 
 /* ── Crop helper ── */
@@ -199,8 +226,8 @@ function cropDetections(file, detections) {
 
 /* ── Step 3: Review detections ── */
 
-async function showReviewScreen(detections) {
-  if (detections.length === 0) {
+async function showReviewScreen(allDetections) {
+  if (allDetections.length === 0) {
     setBody(`
       <div class="camera-scanning">
         <p class="camera-noresult-title">No items detected</p>
@@ -212,15 +239,39 @@ async function showReviewScreen(detections) {
     return;
   }
 
-  const cropUrls = await cropDetections(currentFile, detections);
+  // Build crop previews per source file
+  const cropUrlsByFileIndex = {};
+  for (let i = 0; i < currentFiles.length; i++) {
+    const detectionsForFile = allDetections.filter(d => d.fileIndex === i);
+    if (detectionsForFile.length) {
+      cropUrlsByFileIndex[i] = await cropDetections(currentFiles[i], detectionsForFile);
+    }
+  }
 
-  const roomOptions = ROOMS.map((r, i) =>
-    `<option value="${i + 1}">${r}</option>`
-  ).join('');
+  // Assign crop URLs back to detections
+  const fileCounters = {};
+  const detectionsWithCrops = allDetections.map(d => {
+    const idx = fileCounters[d.fileIndex] ?? 0;
+    fileCounters[d.fileIndex] = idx + 1;
+    return { ...d, cropUrl: (cropUrlsByFileIndex[d.fileIndex] || [])[idx] || null };
+  });
 
-  const rows = detections.map((d, i) => `
-    <div class="camera-item-row" data-class-id="${d.class_id}" data-bbox="${JSON.stringify(d.bbox || null)}">
-      ${cropUrls[i] ? `<img class="camera-item-thumb" src="${cropUrls[i]}" alt="${d.label}">` : ''}
+  const roomOptions = ROOMS.map((r, i) => `<option value="${i + 1}">${r}</option>`).join('');
+
+  const globalRoomPicker = `
+    <div class="camera-global-room">
+      <label class="camera-global-room-label">Room for all items</label>
+      <select class="camera-select" id="cameraGlobalRoom">${roomOptions}</select>
+    </div>
+  `;
+
+  const rows = detectionsWithCrops.map(d => `
+    <div class="camera-item-row"
+      data-class-id="${d.class_id}"
+      data-bbox="${JSON.stringify(d.bbox || null)}"
+      data-local-path="${d.localPath || ''}"
+      data-storage-path="${d.storagePath || ''}">
+      ${d.cropUrl ? `<img class="camera-item-thumb" src="${d.cropUrl}" alt="${d.label}">` : ''}
       <div class="camera-item-header">
         <div>
           <span class="camera-item-name">${d.label}</span>
@@ -252,11 +303,19 @@ async function showReviewScreen(detections) {
   `).join('');
 
   setBody(`
+    ${globalRoomPicker}
     <div class="camera-review-list">${rows}</div>
     <button class="camera-action-btn" id="cameraStoreBtn">
-      <span>Add ${detections.length} Item${detections.length !== 1 ? 's' : ''} to Inventory</span>
+      <span>Add ${allDetections.length} Item${allDetections.length !== 1 ? 's' : ''} to Inventory</span>
     </button>
   `);
+
+  // Global room picker syncs all item rows
+  document.getElementById('cameraGlobalRoom').addEventListener('change', e => {
+    document.querySelectorAll('.camera-item-row [name="room"]').forEach(sel => {
+      sel.value = e.target.value;
+    });
+  });
 
   document.querySelectorAll('.camera-item-remove').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -279,15 +338,27 @@ async function showReviewScreen(detections) {
 
 async function doStore() {
   const rows = document.querySelectorAll('.camera-item-row');
-  if (rows.length === 0) { closeModal(); return; }
+  if (!rows.length) { closeModal(); return; }
 
-  const items = Array.from(rows).map(row => ({
-    class_id: parseInt(row.dataset.classId),
-    purchase_year: parseInt(row.querySelector('[name="year"]').value) || null,
-    cost: parseFloat(row.querySelector('[name="cost"]').value) || null,
-    room_id: parseInt(row.querySelector('[name="room"]').value),
-    bbox: JSON.parse(row.dataset.bbox || 'null'),
-  }));
+  // Group items by source image path
+  const groups = new Map();
+  rows.forEach(row => {
+    const key = row.dataset.localPath + '|' + row.dataset.storagePath;
+    if (!groups.has(key)) {
+      groups.set(key, {
+        localPath: row.dataset.localPath,
+        storagePath: row.dataset.storagePath,
+        items: [],
+      });
+    }
+    groups.get(key).items.push({
+      class_id: parseInt(row.dataset.classId),
+      purchase_year: parseInt(row.querySelector('[name="year"]').value) || null,
+      cost: parseFloat(row.querySelector('[name="cost"]').value) || null,
+      room_id: parseInt(row.querySelector('[name="room"]').value),
+      bbox: JSON.parse(row.dataset.bbox || 'null'),
+    });
+  });
 
   setBody(`
     <div class="camera-scanning">
@@ -297,13 +368,17 @@ async function doStore() {
   `);
 
   try {
-    await apiFetch('/store', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ items }),
-    });
+    for (const group of groups.values()) {
+      const body = { items: group.items, path: group.localPath };
+      if (group.storagePath) body.original_storage_path = group.storagePath;
+      await apiFetch('/store', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+    }
   } catch {
-    // server-side path is still set from upload; close anyway
+    // silent fail — items may have partially saved; refresh will show what landed
   }
 
   closeModal();
