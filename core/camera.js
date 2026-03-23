@@ -121,7 +121,8 @@ async function doScan() {
       // Single image flow
       const form = new FormData();
       form.append('image', currentFiles[0]);
-      await apiFetch('/upload', { method: 'POST', body: form });
+      const uploadRes = await apiFetch('/upload', { method: 'POST', body: form });
+      if (!uploadRes.ok) throw new Error('Upload failed');
       const res = await apiFetch('/detect', { method: 'POST' });
       const data = await res.json();
       scanResults = [{
@@ -133,7 +134,8 @@ async function doScan() {
       // Multi-image flow
       const form = new FormData();
       currentFiles.forEach(f => form.append('images', f));
-      await apiFetch('/multi-upload', { method: 'POST', body: form });
+      const uploadRes = await apiFetch('/multi-upload', { method: 'POST', body: form });
+      if (!uploadRes.ok) throw new Error('Upload failed');
       const res = await apiFetch('/multiscan', { method: 'POST' });
       const data = await res.json();
       scanResults = (data.results || []).map(r => ({

@@ -1,7 +1,7 @@
 import { render as renderDrawer, init as initDrawer } from './core/drawer.js';
 import { render as renderHeader } from './core/header.js';
 import { render as renderFooter, setActiveTab, updateItemsBadge } from './core/footer.js';
-import { loadItems, setView, getItem, setFilter } from './items.js';
+import { loadItems, setView, getItem, setFilter, getItems } from './items.js';
 import { init as initCamera, open as openCamera } from './core/camera.js';
 import { init as initItemSheet, open as openItemSheet } from './core/item-sheet.js';
 import { init as initSettings, open as openSettings } from './core/settings.js';
@@ -27,8 +27,7 @@ supabase.auth.onAuthStateChange((_event, session) => {
 
   async function refresh() {
     await loadItems();
-    const count = document.querySelectorAll('.item-card').length;
-    updateItemsBadge(count);
+    updateItemsBadge(getItems().length);
   }
 
   function navigate(tab) {
