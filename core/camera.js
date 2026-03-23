@@ -3,41 +3,6 @@ const ROOMS = [
   "Dining Room", "Office", "Garage", "Other",
 ];
 
-// COCO class IDs relevant to home inventory (furniture, appliances, electronics, kitchenware)
-const HOUSEHOLD_CLASS_IDS = new Set([
-  39,  // bottle
-  40,  // wine glass
-  41,  // cup
-  42,  // fork
-  43,  // knife
-  44,  // spoon
-  45,  // bowl
-  56,  // chair
-  57,  // couch
-  58,  // potted plant
-  59,  // bed
-  60,  // dining table
-  61,  // toilet
-  62,  // tv
-  63,  // laptop
-  64,  // mouse
-  65,  // remote
-  66,  // keyboard
-  67,  // cell phone
-  68,  // microwave
-  69,  // oven
-  70,  // toaster
-  71,  // sink
-  72,  // refrigerator
-  73,  // book
-  74,  // clock
-  75,  // vase
-  76,  // scissors
-  77,  // teddy bear
-  78,  // hair drier
-  79,  // toothbrush
-]);
-
 import { apiFetch } from './api.js';
 
 let onRefresh = null;
@@ -173,11 +138,9 @@ async function doScan() {
     return;
   }
 
-  // Filter to household items and attach path metadata to each detection
+  // Attach path metadata to each detection (backend already filters by class)
   const allDetections = scanResults.flatMap((r, i) =>
-    r.detections
-      .filter(d => HOUSEHOLD_CLASS_IDS.has(d.class_id))
-      .map(d => ({ ...d, localPath: r.localPath, storagePath: r.storagePath, fileIndex: i }))
+    r.detections.map(d => ({ ...d, localPath: r.localPath, storagePath: r.storagePath, fileIndex: i }))
   );
 
   showReviewScreen(allDetections);
