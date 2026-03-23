@@ -8,9 +8,13 @@ import { init as initSettings, open as openSettings } from './core/settings.js';
 import { supabase } from './core/supabaseClient.js';
 import { renderLogin } from './core/login.js';
 
+let _appReady = false;
+
 supabase.auth.onAuthStateChange((_event, session) => {
   document.getElementById('app-loading')?.remove();
-  if (!session) { renderLogin(); return; }
+  if (!session) { _appReady = false; renderLogin(); return; }
+  if (_appReady) return;  // ignore TOKEN_REFRESHED and other repeat events
+  _appReady = true;
 
   document.body.innerHTML = `
     ${renderDrawer()}
