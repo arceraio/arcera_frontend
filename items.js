@@ -1,4 +1,4 @@
-import { render as renderSummary } from './objects/summary.js';
+import { render as renderSummary, init as initSummary } from './objects/summary.js';
 import { render as renderItemsList } from './objects/items-list.js';
 import { apiFetch } from './core/api.js';
 
@@ -20,6 +20,7 @@ function renderMain() {
     bindMainEvents();
   } else {
     main.innerHTML = renderSummary(allItems);
+    if (allItems.length > 0) initSummary();
   }
 }
 

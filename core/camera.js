@@ -5,6 +5,18 @@ const ROOMS = [
 
 import { apiFetch } from './api.js';
 
+// Inject camera stylesheet once on first load
+(function injectCameraCSS() {
+  const id = 'camera-css';
+  if (!document.getElementById(id)) {
+    const link = document.createElement('link');
+    link.id  = id;
+    link.rel = 'stylesheet';
+    link.href = 'styles/components/camera.css';
+    document.head.appendChild(link);
+  }
+})();
+
 let onRefresh = null;
 let currentFiles = [];
 
@@ -17,16 +29,17 @@ export function init(refreshCb) {
       <div class="camera-sheet-handle"></div>
       <div class="camera-sheet-header">
         <span></span>
-        <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
-          <span class="section-eyebrow">New Scan</span>
-          <span class="camera-sheet-title">Scan Items</span>
+        <div class="camera-header-titles">
+          <span class="camera-header-eyebrow">New Scan</span>
+          <span class="camera-header-title">Scan Items</span>
         </div>
         <button class="camera-sheet-close" id="cameraClose" aria-label="Close">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
           </svg>
         </button>
       </div>
+      <div class="camera-header-rule"></div>
       <div class="camera-body" id="cameraBody"></div>
     </div>
   `);
@@ -68,10 +81,12 @@ function showPickScreen() {
         </svg>
       </div>
       <span id="cameraPickLabel" class="camera-pick-label">Tap to select photos</span>
-      <span class="camera-pick-sub">JPG, PNG, WEBP · one or more photos</span>
+      <span class="camera-pick-sub">JPG, PNG, WEBP · one or more</span>
       <input type="file" id="cameraFileInput" accept=".jpg,.jpeg,.png,.webp" multiple style="display:none">
     </label>
-    <button class="camera-action-btn" id="cameraScanBtn" disabled><span>Scan for Items</span></button>
+    <button class="camera-action-btn" id="cameraScanBtn" disabled>
+      <span>Scan for Items</span>
+    </button>
   `);
 
   document.getElementById('cameraFileInput').addEventListener('change', e => {
@@ -95,7 +110,7 @@ async function doScan() {
   setBody(`
     <div class="camera-scanning">
       <div class="camera-spinner"></div>
-      <p>Scanning your photo${plural ? 's' : ''}…</p>
+      <p class="camera-scanning-label">Analyzing your photo${plural ? 's' : ''}<span class="camera-scanning-dots">···</span></p>
     </div>
   `);
 
@@ -131,7 +146,9 @@ async function doScan() {
     setBody(`
       <div class="camera-scanning">
         <p class="camera-error">Could not reach the server. Is it running?</p>
-        <button class="camera-action-btn" id="cameraRetryBtn" style="margin-top:16px"><span>Try Again</span></button>
+        <button class="camera-action-btn" id="cameraRetryBtn" style="margin-top:16px">
+          <span>Try Again</span>
+        </button>
       </div>
     `);
     document.getElementById('cameraRetryBtn').addEventListener('click', showPickScreen);
@@ -195,7 +212,9 @@ async function showReviewScreen(allDetections) {
       <div class="camera-scanning">
         <p class="camera-noresult-title">No items detected</p>
         <p class="camera-error">Try a clearer photo with visible objects in frame.</p>
-        <button class="camera-action-btn" id="cameraRetryBtn" style="margin-top:16px"><span>Try Again</span></button>
+        <button class="camera-action-btn" id="cameraRetryBtn" style="margin-top:16px">
+          <span>Try Again</span>
+        </button>
       </div>
     `);
     document.getElementById('cameraRetryBtn').addEventListener('click', showPickScreen);
@@ -223,9 +242,16 @@ async function showReviewScreen(allDetections) {
 
   const globalRoomPicker = `
     <div class="camera-global-room">
-      <label class="camera-global-room-label">Room for all items</label>
+      <label class="camera-global-room-label">Room for all</label>
       <select class="camera-select" id="cameraGlobalRoom">${roomOptions}</select>
     </div>
+  `;
+
+  const placeholderSvg = `
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+      <polyline points="21 15 16 10 5 21"/>
+    </svg>
   `;
 
   const rows = detectionsWithCrops.map(d => `
@@ -234,17 +260,20 @@ async function showReviewScreen(allDetections) {
       data-bbox="${JSON.stringify(d.bbox || null)}"
       data-local-path="${d.localPath || ''}"
       data-storage-path="${d.storagePath || ''}">
-      ${d.cropUrl ? `<img class="camera-item-thumb" src="${d.cropUrl}" alt="${d.label}">` : ''}
-      <div class="camera-item-header">
-        <div>
+      <button class="camera-item-remove" aria-label="Remove item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+      <div class="camera-item-card-inner">
+        ${d.cropUrl
+          ? `<img class="camera-item-thumb" src="${d.cropUrl}" alt="${d.label}">`
+          : `<div class="camera-item-thumb-placeholder">${placeholderSvg}</div>`
+        }
+        <div class="camera-item-info">
           <span class="camera-item-name">${d.label}</span>
           <span class="camera-item-conf">${Math.round(d.confidence * 100)}% match</span>
         </div>
-        <button class="camera-item-remove" aria-label="Remove item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-          </svg>
-        </button>
       </div>
       <div class="camera-item-fields">
         <div class="camera-field">
@@ -257,7 +286,7 @@ async function showReviewScreen(allDetections) {
           <input type="number" class="camera-input" name="cost"
             placeholder="0.00" min="0" step="0.01">
         </div>
-        <div class="camera-field camera-field-room">
+        <div class="camera-field">
           <label>Room</label>
           <select class="camera-select" name="room">${roomOptions}</select>
         </div>
@@ -289,7 +318,8 @@ async function showReviewScreen(allDetections) {
         storeBtn.querySelector('span').textContent = 'No Items Selected';
         storeBtn.disabled = true;
       } else {
-        storeBtn.querySelector('span').textContent = `Add ${count} Item${count !== 1 ? 's' : ''} to Inventory`;
+        storeBtn.querySelector('span').textContent =
+          `Add ${count} Item${count !== 1 ? 's' : ''} to Inventory`;
       }
     });
   });
@@ -326,7 +356,7 @@ async function doStore() {
   setBody(`
     <div class="camera-scanning">
       <div class="camera-spinner"></div>
-      <p>Saving items…</p>
+      <p class="camera-scanning-label">Saving items<span class="camera-scanning-dots">···</span></p>
     </div>
   `);
 

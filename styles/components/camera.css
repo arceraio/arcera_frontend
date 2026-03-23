@@ -1,0 +1,511 @@
+/* ── Camera / Scan Sheet ──────────────────────────────────────────────────── */
+/* Bottom sheet with 4-step scan flow: Pick → Scanning → Review → Storing.  */
+/* Mobile-first; max-width 600px centered on desktop (≥768px).               */
+
+/* ── Overlay ── */
+
+.camera-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s linear;
+}
+.camera-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ── Sheet container ── */
+
+.camera-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--white);
+  border-radius: 24px 24px 0 0;
+  z-index: 300;
+  transform: translateY(100%);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+}
+.camera-sheet.open {
+  transform: translateY(0);
+}
+
+@media (min-width: 768px) {
+  .camera-sheet {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%) translateY(100%);
+    width: 600px;
+    border-radius: 24px 24px 0 0;
+  }
+  .camera-sheet.open {
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* ── Drag handle ── */
+
+.camera-sheet-handle {
+  width: 40px;
+  height: 4px;
+  background: var(--color-divider);
+  border-radius: 2px;
+  margin: 12px auto 0;
+  flex-shrink: 0;
+}
+
+/* ── Header ── */
+
+.camera-sheet-header {
+  display: grid;
+  grid-template-columns: 36px 1fr 36px;
+  align-items: center;
+  padding: 14px 20px 0;
+  flex-shrink: 0;
+}
+
+.camera-header-titles {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.camera-header-eyebrow {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+}
+
+.camera-header-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--color-navy);
+  line-height: 1.1;
+}
+
+/* Gold accent line below header */
+.camera-header-rule {
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--color-gold),
+    transparent
+  );
+  margin: 12px 20px 0;
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
+/* ── Close button ── */
+
+.camera-sheet-close {
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: var(--color-bg);
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+.camera-sheet-close:hover {
+  background: var(--color-divider);
+}
+.camera-sheet-close svg {
+  width: 14px;
+  height: 14px;
+  color: var(--color-body);
+}
+
+/* ── Body (scrollable content area) ── */
+
+.camera-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 0;
+}
+
+/* ── Step 1: Pick screen ── */
+
+.camera-pick-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 24px;
+  min-height: 180px;
+  border: 1.5px dashed var(--color-divider);
+  border-radius: var(--radius);
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.15s, background 0.15s;
+  text-decoration: none;
+}
+.camera-pick-area:hover,
+.camera-pick-area:focus-within {
+  border-color: var(--color-gold);
+  background: rgba(201, 168, 76, 0.04);
+}
+
+.camera-pick-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--color-bg);
+  border: 1px solid var(--color-divider);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.15s, background 0.15s;
+  margin-bottom: 2px;
+}
+.camera-pick-area:hover .camera-pick-icon,
+.camera-pick-area:focus-within .camera-pick-icon {
+  border-color: var(--color-gold);
+  background: rgba(201, 168, 76, 0.08);
+}
+.camera-pick-icon svg {
+  width: 28px;
+  height: 28px;
+  color: var(--color-gold);
+  transition: color 0.15s;
+}
+
+.camera-pick-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-body);
+  line-height: 1.3;
+}
+
+.camera-pick-sub {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--color-muted);
+  letter-spacing: 0.02em;
+}
+
+/* ── Primary action button ── */
+
+.camera-action-btn {
+  width: 100%;
+  padding: 15px;
+  background: var(--color-navy);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+  transition: color 0.3s ease;
+  letter-spacing: 0.01em;
+}
+.camera-action-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--color-gold);
+  transform: translateX(-101%);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.camera-action-btn:hover:not(:disabled)::before {
+  transform: translateX(0);
+}
+.camera-action-btn:hover:not(:disabled) {
+  color: var(--color-navy);
+}
+.camera-action-btn span {
+  position: relative;
+  z-index: 1;
+}
+.camera-action-btn:disabled {
+  background: var(--color-divider);
+  color: var(--color-muted);
+  cursor: not-allowed;
+}
+
+/* ── Step 2 & 4: Scanning / Storing states ── */
+
+.camera-scanning {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 56px 20px;
+  gap: 16px;
+  text-align: center;
+  flex: 1;
+}
+
+.camera-scanning-label {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.15rem;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--color-navy);
+}
+
+.camera-scanning-dots {
+  display: inline-block;
+  color: var(--color-gold);
+  letter-spacing: 0.1em;
+  animation: camera-dots 1.2s steps(4, end) infinite;
+}
+@keyframes camera-dots {
+  0%   { content: ''; clip-path: inset(0 75% 0 0); }
+  25%  { clip-path: inset(0 50% 0 0); }
+  50%  { clip-path: inset(0 25% 0 0); }
+  75%  { clip-path: inset(0 0 0 0); }
+  100% { clip-path: inset(0 75% 0 0); }
+}
+
+.camera-scanning p {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  color: var(--color-muted);
+}
+
+.camera-noresult-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--color-navy);
+}
+
+.camera-error {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  color: #EF4444;
+}
+
+/* ── Spinner ── */
+
+.camera-spinner {
+  width: 44px;
+  height: 44px;
+  border: 3px solid var(--color-divider);
+  border-top-color: var(--color-gold);
+  border-radius: 50%;
+  animation: camera-spin 0.75s linear infinite;
+  flex-shrink: 0;
+}
+@keyframes camera-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Step 3: Review screen ── */
+
+/* Global room picker */
+.camera-global-room {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius);
+  flex-shrink: 0;
+}
+
+.camera-global-room-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Scrollable list of detection cards */
+.camera-review-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Individual detection card */
+.camera-item-row {
+  background: var(--white);
+  border: 1px solid var(--color-divider);
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  position: relative;
+  transition: box-shadow 0.15s;
+}
+.camera-item-row:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* Card inner layout: thumb left, info right */
+.camera-item-card-inner {
+  display: flex;
+  gap: 14px;
+  padding: 14px;
+  align-items: flex-start;
+}
+
+/* Crop thumbnail */
+.camera-item-thumb {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+  background: var(--color-bg);
+}
+
+.camera-item-thumb-placeholder {
+  width: 72px;
+  height: 72px;
+  border-radius: 8px;
+  flex-shrink: 0;
+  background: var(--color-bg);
+  border: 1px solid var(--color-divider);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.camera-item-thumb-placeholder svg {
+  width: 24px;
+  height: 24px;
+  color: var(--color-divider);
+}
+
+/* Info column */
+.camera-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.camera-item-name {
+  display: block;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--color-navy);
+  text-transform: capitalize;
+  line-height: 1.3;
+  margin-bottom: 3px;
+  padding-right: 28px; /* space for remove btn */
+}
+
+.camera-item-conf {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 400;
+  color: var(--color-gold);
+  letter-spacing: 0.04em;
+}
+
+/* Remove button — top-right of card */
+.camera-item-remove {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 26px;
+  height: 26px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: background 0.15s;
+  color: var(--color-muted);
+}
+.camera-item-remove:hover {
+  background: #FEE2E2;
+  color: #EF4444;
+}
+.camera-item-remove svg {
+  width: 13px;
+  height: 13px;
+  color: inherit;
+}
+
+/* 3-column field grid */
+.camera-item-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  padding: 0 14px 14px;
+  border-top: 1px solid var(--color-divider);
+  padding-top: 12px;
+  margin-top: 0;
+}
+
+.camera-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.camera-field label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.camera-input,
+.camera-select {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  padding: 7px 9px;
+  border: 1px solid var(--color-divider);
+  border-radius: 8px;
+  background: var(--white);
+  color: var(--color-body);
+  width: 100%;
+  transition: border-color 0.15s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.camera-input:focus,
+.camera-select:focus {
+  outline: none;
+  border-color: var(--color-gold);
+}
+
+/* Global select also uses camera-select */
+.camera-global-room .camera-select {
+  flex: 1;
+  font-size: 0.85rem;
+  padding: 7px 9px;
+}

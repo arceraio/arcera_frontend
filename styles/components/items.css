@@ -1,0 +1,411 @@
+/* ── Items Component Styles ── */
+/* Magazine-grid inventory view for Arcera */
+
+/* ── Section Header ── */
+
+.items-section-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.items-count {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: var(--color-muted);
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+.items-sort-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.items-sort-label svg {
+  width: 12px;
+  height: 12px;
+  color: var(--color-gold);
+}
+
+/* ── Room Filter Chips (enhanced) ── */
+
+.room-chips {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  margin-bottom: 20px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.room-chips::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Items Grid ── */
+
+.items-grid {
+  display: grid;
+  grid-template-columns: var(--grid-columns, repeat(2, 1fr));
+  gap: var(--grid-gap, 10px);
+}
+
+/* ── Item Card ── */
+
+.item-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  cursor: pointer;
+}
+
+.item-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* ── Image Area ── */
+
+.item-card-image-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: var(--color-navy);
+}
+
+.item-card-thumb {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.item-card:hover .item-card-thumb {
+  transform: scale(1.03);
+}
+
+/* No-image placeholder: navy gradient with initial letter */
+.item-card-thumb-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(145deg, #0D1B2A 0%, #1a2f44 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.item-card-initial {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: var(--color-gold);
+  text-transform: uppercase;
+  line-height: 1;
+  opacity: 0.85;
+  user-select: none;
+}
+
+/* ── Duplicate Badge (overlay, image corner) ── */
+
+.item-card-duplicate-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.62rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #92400E;
+  background: #FEF3C7;
+  border: 1px solid #FCD34D;
+  padding: 3px 8px;
+  border-radius: 20px;
+  line-height: 1;
+}
+
+.item-card-duplicate-badge svg {
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+}
+
+/* ── Delete Button ── */
+
+.item-card-delete {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 26px;
+  height: 26px;
+  border: none;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.15s, opacity 0.15s;
+  z-index: 2;
+}
+
+/* Desktop: hidden until hover */
+@media (hover: hover) and (pointer: fine) {
+  .item-card-delete {
+    opacity: 0;
+  }
+  .item-card:hover .item-card-delete {
+    opacity: 1;
+  }
+}
+
+.item-card-delete svg {
+  width: 12px;
+  height: 12px;
+  color: var(--color-muted);
+  transition: color 0.15s;
+}
+
+.item-card-delete:hover {
+  background: #FEE2E2;
+}
+
+.item-card-delete:hover svg {
+  color: #EF4444;
+}
+
+/* ── Card Body ── */
+
+.item-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: var(--card-inner-padding, 12px);
+  flex: 1;
+}
+
+.item-card-name {
+  font-family: 'DM Sans', sans-serif;
+  font-size: var(--card-name-font, 0.88rem);
+  font-weight: 700;
+  color: var(--color-navy);
+  text-transform: capitalize;
+  line-height: 1.3;
+  /* Reserve space so delete button never clips text */
+  padding-right: 0;
+  /* Two-line clamp */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.item-card-cost {
+  font-family: 'DM Mono', monospace;
+  font-size: var(--card-cost-font, 1rem);
+  font-weight: 700;
+  color: var(--color-gold);
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.item-card-cost--missing {
+  color: var(--color-muted);
+  font-weight: 400;
+}
+
+/* ── Room + Year row ── */
+
+.item-card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.item-card-room {
+  display: inline-flex;
+  align-items: center;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-gold);
+  background: rgba(201, 168, 76, 0.1);
+  border: 1px solid rgba(201, 168, 76, 0.22);
+  padding: 3px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 80%;
+}
+
+.item-card-year {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.68rem;
+  color: var(--color-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── Needs Info Badge (in card body) ── */
+
+.item-card-needs-info {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.62rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #1D4ED8;
+  background: rgba(29, 78, 216, 0.07);
+  border: 1px solid rgba(29, 78, 216, 0.18);
+  padding: 3px 8px;
+  border-radius: 20px;
+  align-self: flex-start;
+  margin-top: 2px;
+  line-height: 1;
+}
+
+.item-card-needs-info svg {
+  width: 9px;
+  height: 9px;
+  flex-shrink: 0;
+}
+
+/* ── Empty State (enhanced) ── */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 64px 24px 48px;
+  text-align: center;
+}
+
+.empty-state-icon {
+  width: 56px;
+  height: 56px;
+  color: var(--color-divider);
+  margin-bottom: 20px;
+}
+
+.empty-state-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--color-navy);
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+
+.empty-state-subtitle {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  color: var(--color-muted);
+  max-width: 260px;
+  line-height: 1.6;
+  margin-bottom: 28px;
+}
+
+.empty-state-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  background: var(--color-navy);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: color 0.3s ease;
+}
+
+.empty-state-cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--color-gold);
+  transform: translateX(-101%);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.empty-state-cta:hover::before {
+  transform: translateX(0);
+}
+
+.empty-state-cta:hover {
+  color: var(--color-navy);
+}
+
+.empty-state-cta > * {
+  position: relative;
+  z-index: 1;
+}
+
+.empty-state-cta svg {
+  width: 14px;
+  height: 14px;
+  color: var(--color-gold);
+  transition: color 0.3s ease;
+}
+
+.empty-state-cta:hover svg {
+  color: var(--color-navy);
+}
+
+/* ── Needs-info chip on filter bar ── */
+
+.room-chip--info {
+  border-color: rgba(29, 78, 216, 0.25);
+  color: #1D4ED8;
+  background: rgba(29, 78, 216, 0.06);
+}
+
+.room-chip--info:hover {
+  border-color: #1D4ED8;
+  color: #1D4ED8;
+}
+
+.room-chip--info.active {
+  background: #1D4ED8;
+  color: var(--white);
+  border-color: #1D4ED8;
+}
