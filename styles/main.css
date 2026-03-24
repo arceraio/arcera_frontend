@@ -228,7 +228,7 @@ body {
     top: 0;
     height: 100vh;
     transform: none !important;
-    transition: none;
+    transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
     flex-shrink: 0;
     box-shadow: none;
     border-right: 1px solid rgba(255,255,255,0.08);
@@ -241,6 +241,48 @@ body {
   .drawer-close {
     display: none;
   }
+}
+
+/* ── Drawer collapse button (desktop only) ── */
+.drawer-collapse-btn { display: none; }
+
+@media (min-width: 820px) {
+  .drawer-collapse-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: rgba(255,255,255,0.12);
+    border-radius: 50%;
+    cursor: pointer;
+    flex-shrink: 0;
+    margin-bottom: 14px;
+    align-self: flex-end;
+    transition: background 0.15s;
+  }
+  .drawer-collapse-btn:hover { background: rgba(255,255,255,0.22); }
+  .drawer-collapse-btn svg { width: 16px; height: 16px; color: var(--white); }
+  .drawer-collapse-icon { transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
+
+  /* ── Collapsed state ── */
+  .drawer--collapsed { width: 64px !important; }
+  .drawer--collapsed .drawer-section-title { display: none; }
+  .drawer--collapsed .drawer-user-info { display: none; }
+  .drawer--collapsed .drawer-header-user { justify-content: center; }
+  .drawer--collapsed .drawer-header { align-items: center; }
+  .drawer--collapsed .drawer-menu li {
+    justify-content: center;
+    padding: 14px 0;
+  }
+  .drawer--collapsed .drawer-menu li > :not(svg) { display: none; }
+  .drawer--collapsed .drawer-footer li {
+    justify-content: center;
+    padding: 12px 0;
+  }
+  .drawer--collapsed .drawer-footer li > :not(svg) { display: none; }
+  .drawer--collapsed .drawer-collapse-icon { transform: rotate(180deg); }
 }
 
 .drawer-header {

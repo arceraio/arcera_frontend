@@ -75,6 +75,19 @@ supabase.auth.onAuthStateChange((_event, session) => {
     if (e.target.closest('.item-card-delete')) return;
     const card = e.target.closest('.item-card[data-id]');
     if (!card) return;
+    const grid = document.getElementById('itemsGrid');
+    if (grid?.classList.contains('items-selecting')) {
+      card.classList.toggle('item-card--selected');
+      // update bulk bar count
+      const countEl = document.getElementById('itemsBulkCount');
+      const deleteBtn = document.getElementById('itemsBulkDelete');
+      if (countEl && deleteBtn) {
+        const n = grid.querySelectorAll('.item-card--selected').length;
+        countEl.textContent = n === 1 ? '1 selected' : `${n} selected`;
+        deleteBtn.disabled = n === 0;
+      }
+      return;
+    }
     const item = getItem(card.dataset.id);
     if (item) openItemSheet(item);
   });

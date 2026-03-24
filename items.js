@@ -37,6 +37,43 @@ export function getItems() {
   return allItems;
 }
 
+function updateBulkBar() {
+  const grid = document.getElementById('itemsGrid');
+  const bar = document.getElementById('itemsBulkBar');
+  const countEl = document.getElementById('itemsBulkCount');
+  const deleteBtn = document.getElementById('itemsBulkDelete');
+  if (!grid || !bar || !countEl || !deleteBtn) return;
+
+  const selected = grid.querySelectorAll('.item-card--selected');
+  const n = selected.length;
+  countEl.textContent = n === 1 ? '1 selected' : `${n} selected`;
+  deleteBtn.disabled = n === 0;
+}
+
+function enterSelectMode() {
+  const grid = document.getElementById('itemsGrid');
+  const bar = document.getElementById('itemsBulkBar');
+  const toggle = document.getElementById('itemsSelectToggle');
+  if (!grid || !bar || !toggle) return;
+  grid.classList.add('items-selecting');
+  bar.classList.add('active');
+  toggle.textContent = 'Done';
+  toggle.classList.add('active');
+}
+
+function exitSelectMode() {
+  const grid = document.getElementById('itemsGrid');
+  const bar = document.getElementById('itemsBulkBar');
+  const toggle = document.getElementById('itemsSelectToggle');
+  if (!grid || !bar || !toggle) return;
+  grid.classList.remove('items-selecting');
+  bar.classList.remove('active');
+  grid.querySelectorAll('.item-card--selected').forEach(c => c.classList.remove('item-card--selected'));
+  toggle.textContent = 'Select';
+  toggle.classList.remove('active');
+  updateBulkBar();
+}
+
 function bindMainEvents() {
   document.querySelectorAll('.room-chip').forEach(chip => {
     chip.addEventListener('click', () => {
@@ -49,11 +86,36 @@ function bindMainEvents() {
   });
 
   document.querySelectorAll('.item-card-delete').forEach(btn => {
-    btn.addEventListener('click', async () => {
+    btn.addEventListener('click', async e => {
+      e.stopPropagation();
       const id = btn.dataset.id;
       await apiFetch(`/items/${id}`, { method: 'DELETE' });
       await loadItems();
     });
+  });
+
+  // Select toggle
+  document.getElementById('itemsSelectToggle')?.addEventListener('click', () => {
+    const grid = document.getElementById('itemsGrid');
+    if (grid?.classList.contains('items-selecting')) {
+      exitSelectMode();
+    } else {
+      enterSelectMode();
+    }
+  });
+
+  // Cancel bulk
+  document.getElementById('itemsBulkCancel')?.addEventListener('click', exitSelectMode);
+
+  // Bulk delete
+  document.getElementById('itemsBulkDelete')?.addEventListener('click', async () => {
+    const grid = document.getElementById('itemsGrid');
+    if (!grid) return;
+    const ids = [...grid.querySelectorAll('.item-card--selected[data-id]')]
+      .map(c => c.dataset.id);
+    if (!ids.length) return;
+    await Promise.all(ids.map(id => apiFetch(`/items/${id}`, { method: 'DELETE' })));
+    await loadItems();
   });
 }
 

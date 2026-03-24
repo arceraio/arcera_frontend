@@ -401,6 +401,150 @@
   height: 16px;
 }
 
+/* ─── First-run Onboarding ──────────────────────────────────────── */
+
+.home-onboard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px 20px 56px;
+  gap: 40px;
+  text-align: center;
+}
+
+.home-onboard-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.home-onboard-eyebrow {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--color-gold);
+}
+
+.home-onboard-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.8rem, 7vw, 2.6rem);
+  font-weight: 600;
+  color: var(--color-navy);
+  line-height: 1.18;
+}
+
+.home-onboard-accent-line {
+  width: 36px;
+  height: 2px;
+  background: var(--color-gold);
+  border-radius: 1px;
+  margin-top: 4px;
+}
+
+.home-onboard-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  max-width: 360px;
+}
+
+.home-onboard-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  text-align: left;
+}
+
+.home-onboard-step-num {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--color-navy);
+  color: var(--white);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+}
+
+.home-onboard-step-icon {
+  display: none; /* number is sufficient */
+}
+
+.home-onboard-step-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.home-onboard-step-title {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--color-navy);
+}
+
+.home-onboard-step-desc {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.84rem;
+  color: var(--color-muted);
+  line-height: 1.55;
+}
+
+.home-onboard-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 15px 32px;
+  background: var(--color-navy);
+  color: var(--white);
+  border: none;
+  border-radius: 99px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: color 0.3s ease, transform 0.12s ease;
+}
+.home-onboard-cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--color-gold);
+  transform: translateX(-101%);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.home-onboard-cta:hover::before {
+  transform: translateX(0);
+}
+.home-onboard-cta:hover {
+  color: var(--color-navy);
+}
+.home-onboard-cta > * {
+  position: relative;
+  z-index: 1;
+}
+.home-onboard-cta svg {
+  width: 16px;
+  height: 16px;
+}
+
+@media (min-width: 480px) {
+  .home-onboard-steps {
+    max-width: 420px;
+  }
+}
+
 /* ─── Timeline (below recent preview) ──────────────────────────── */
 
 .home-timeline {

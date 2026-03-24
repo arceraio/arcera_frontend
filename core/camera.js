@@ -87,6 +87,12 @@ function showPickScreen() {
     <button class="camera-action-btn" id="cameraScanBtn" disabled>
       <span>Scan for Items</span>
     </button>
+    <div class="camera-tips">
+      <span class="camera-tip">Good lighting</span>
+      <span class="camera-tip">Multiple angles</span>
+      <span class="camera-tip">Avoid blur</span>
+      <span class="camera-tip">Fill the frame</span>
+    </div>
   `);
 
   document.getElementById('cameraFileInput').addEventListener('change', e => {
@@ -103,40 +109,65 @@ function showPickScreen() {
 
 /* ── Step 2: Upload + Detect ── */
 
+function showScanProgress(step) {
+  const steps = ['Uploading photo…', 'Detecting items…'];
+  setBody(`
+    <div class="camera-scanning">
+      <div class="camera-progress-steps">
+        ${steps.map((label, i) => `
+          <div class="camera-progress-step ${i === step ? 'active' : i < step ? 'done' : ''}">
+            <span class="camera-progress-dot"></span>
+            <span class="camera-progress-label">${label}</span>
+          </div>
+        `).join('')}
+      </div>
+      <button class="camera-cancel-btn" id="cameraCancelBtn" aria-label="Cancel scan">Cancel</button>
+    </div>
+  `);
+  document.getElementById('cameraCancelBtn').addEventListener('click', () => {
+    if (window._cameraScanAbort) window._cameraScanAbort.abort();
+    showPickScreen();
+  });
+}
+
 async function doScan() {
   if (!currentFiles.length) return;
 
-  const plural = currentFiles.length > 1;
-  setBody(`
-    <div class="camera-scanning">
-      <div class="camera-spinner"></div>
-      <p class="camera-scanning-label">Analyzing your photo${plural ? 's' : ''}<span class="camera-scanning-dots">···</span></p>
-    </div>
-  `);
+  const controller = new AbortController();
+  window._cameraScanAbort = controller;
+  const timeoutId = setTimeout(() => {
+    controller.abort();
+    setBody(`
+      <div class="camera-scanning">
+        <p class="camera-error">Server is taking longer than expected. Try again.</p>
+        <button class="camera-action-btn" id="cameraRetryBtn" style="margin-top:16px">
+          <span>Try Again</span>
+        </button>
+      </div>
+    `);
+    document.getElementById('cameraRetryBtn')?.addEventListener('click', showPickScreen);
+  }, 30000);
 
   let scanResults = [];
 
   try {
+    showScanProgress(0);
     if (currentFiles.length === 1) {
-      // Single image flow
       const form = new FormData();
       form.append('image', currentFiles[0]);
-      const uploadRes = await apiFetch('/upload', { method: 'POST', body: form });
+      const uploadRes = await apiFetch('/upload', { method: 'POST', body: form, signal: controller.signal });
       if (!uploadRes.ok) throw new Error('Upload failed');
-      const res = await apiFetch('/detect', { method: 'POST' });
+      showScanProgress(1);
+      const res = await apiFetch('/detect', { method: 'POST', signal: controller.signal });
       const data = await res.json();
-      scanResults = [{
-        localPath: data.path,
-        storagePath: null,
-        detections: data.detections || [],
-      }];
+      scanResults = [{ localPath: data.path, storagePath: null, detections: data.detections || [] }];
     } else {
-      // Multi-image flow
       const form = new FormData();
       currentFiles.forEach(f => form.append('images', f));
-      const uploadRes = await apiFetch('/multi-upload', { method: 'POST', body: form });
+      const uploadRes = await apiFetch('/multi-upload', { method: 'POST', body: form, signal: controller.signal });
       if (!uploadRes.ok) throw new Error('Upload failed');
-      const res = await apiFetch('/multiscan', { method: 'POST' });
+      showScanProgress(1);
+      const res = await apiFetch('/multiscan', { method: 'POST', signal: controller.signal });
       const data = await res.json();
       scanResults = (data.results || []).map(r => ({
         localPath: r.local_path,
@@ -144,10 +175,12 @@ async function doScan() {
         detections: r.detections || [],
       }));
     }
-  } catch {
+  } catch (err) {
+    clearTimeout(timeoutId);
+    if (err.name === 'AbortError') return; // user cancelled or timeout already handled
     setBody(`
       <div class="camera-scanning">
-        <p class="camera-error">Could not reach the server. Is it running?</p>
+        <p class="camera-error">Could not reach the server. Check your connection and try again.</p>
         <button class="camera-action-btn" id="cameraRetryBtn" style="margin-top:16px">
           <span>Try Again</span>
         </button>
@@ -156,6 +189,8 @@ async function doScan() {
     document.getElementById('cameraRetryBtn').addEventListener('click', showPickScreen);
     return;
   }
+
+  clearTimeout(timeoutId);
 
   // Attach path metadata to each detection (backend already filters by class)
   const allDetections = scanResults.flatMap((r, i) =>
@@ -273,7 +308,8 @@ async function showReviewScreen(allDetections) {
           : `<div class="camera-item-thumb-placeholder">${placeholderSvg}</div>`
         }
         <div class="camera-item-info">
-          <span class="camera-item-name">${d.label}</span>
+          <input type="text" class="camera-item-name-input" name="label"
+            value="${d.label}" aria-label="Item name" autocomplete="off" spellcheck="false">
           <span class="camera-item-conf">${Math.round(d.confidence * 100)}% match</span>
         </div>
       </div>
@@ -346,8 +382,10 @@ async function doStore() {
         items: [],
       });
     }
+    const labelInput = row.querySelector('[name="label"]');
     groups.get(key).items.push({
       class_id: parseInt(row.dataset.classId),
+      label: labelInput ? labelInput.value.trim() || undefined : undefined,
       purchase_year: parseInt(row.querySelector('[name="year"]').value) || null,
       cost: parseFloat(row.querySelector('[name="cost"]').value) || null,
       room_id: parseInt(row.querySelector('[name="room"]').value),

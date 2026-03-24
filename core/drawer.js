@@ -12,6 +12,11 @@ export function render() {
         </svg>
       </button>
       <div class="drawer-header">
+        <button class="drawer-collapse-btn" id="drawerCollapseBtn" aria-label="Collapse sidebar">
+          <svg class="drawer-collapse-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+        </button>
         <div class="drawer-header-user">
           <div class="drawer-avatar">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -126,6 +131,18 @@ export function init(openCamera, navigate, user, openSettings) {
   function close() {
     drawer.classList.remove('open');
     drawerOverlay.classList.remove('open');
+  }
+
+  // Restore collapsed state on desktop
+  const drawerCollapseBtn = document.getElementById('drawerCollapseBtn');
+  if (localStorage.getItem('arcera_drawer_collapsed') === 'true') {
+    drawer.classList.add('drawer--collapsed');
+  }
+  if (drawerCollapseBtn) {
+    drawerCollapseBtn.addEventListener('click', () => {
+      const collapsed = drawer.classList.toggle('drawer--collapsed');
+      localStorage.setItem('arcera_drawer_collapsed', collapsed ? 'true' : 'false');
+    });
   }
 
   hamburgerBtn.addEventListener('click', open);

@@ -133,19 +133,18 @@ function renderTimeline(items) {
         <div class="items-grid">
           ${visible.map(it => `
             <div class="item-card" data-id="${it.id}">
-              ${it.crop_url
-                ? `<img class="item-card-thumb" src="${it.crop_url}" alt="${it.label}" loading="lazy">`
-                : `<div class="item-card-thumb item-card-thumb-placeholder">
-                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                       <rect x="3" y="3" width="18" height="18" rx="2"/>
-                       <circle cx="8.5" cy="8.5" r="1.5"/>
-                       <polyline points="21 15 16 10 5 21"/>
-                     </svg>
-                   </div>`}
-              <div class="item-card-name">${it.label}</div>
-              <div class="item-card-cost">${it.cost != null ? fmtFull.format(it.cost) : '—'}</div>
-              <span class="item-card-room">${it.room}</span>
+              <div class="item-card-image-wrap">
+                ${it.crop_url
+                  ? `<img class="item-card-thumb" src="${it.crop_url}" alt="${it.label}" loading="lazy">`
+                  : `<div class="item-card-thumb-placeholder">
+                       <span class="item-card-initial">${it.label ? it.label.trim().charAt(0).toUpperCase() : '?'}</span>
+                     </div>`}
+              </div>
+              <div class="item-card-body">
+                <div class="item-card-name">${it.label}</div>
+                <div class="item-card-cost${it.cost == null ? ' item-card-cost--missing' : ''}">${it.cost != null ? fmtFull.format(it.cost) : '—'}</div>
+                ${it.room ? `<span class="item-card-room">${it.room}</span>` : ''}
+              </div>
             </div>
           `).join('')}
         </div>
@@ -170,24 +169,55 @@ function renderTimeline(items) {
 }
 
 function renderEmpty() {
+  const steps = [
+    {
+      icon: `<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>`,
+      title: 'Scan a room',
+      desc: 'Point your camera at any space — living room, kitchen, garage.',
+    },
+    {
+      icon: `<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h.01M15 9h.01M9 15h.01M15 15h.01M12 12h.01"/>`,
+      title: 'AI identifies items',
+      desc: 'Our AI instantly recognises furniture, electronics, and valuables.',
+    },
+    {
+      icon: `<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>`,
+      title: 'Build your record',
+      desc: 'Add costs and dates — your inventory is ready for any claim.',
+    },
+  ];
+
+  const stepsHtml = steps.map((s, i) => `
+    <div class="home-onboard-step">
+      <div class="home-onboard-step-num">${i + 1}</div>
+      <div class="home-onboard-step-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          ${s.icon}
+        </svg>
+      </div>
+      <div class="home-onboard-step-body">
+        <div class="home-onboard-step-title">${s.title}</div>
+        <div class="home-onboard-step-desc">${s.desc}</div>
+      </div>
+    </div>
+  `).join('');
+
   return `
-    <div class="home-empty">
-      <svg class="home-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-           stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-        <polyline points="9 22 9 12 15 12 15 22"/>
-      </svg>
-      <h2 class="home-empty-title">Your inventory is empty</h2>
-      <p class="home-empty-sub">
-        Scan a room with your phone camera to begin building your home inventory.
-      </p>
-      <button class="home-empty-btn nav-camera-btn" aria-label="Scan items">
+    <div class="home-onboard">
+      <div class="home-onboard-header">
+        <p class="home-onboard-eyebrow">Home Inventory</p>
+        <h2 class="home-onboard-title">Document everything.<br>Claim with confidence.</h2>
+        <div class="home-onboard-accent-line"></div>
+      </div>
+      <div class="home-onboard-steps">${stepsHtml}</div>
+      <button class="home-onboard-cta nav-camera-btn" aria-label="Start your first scan">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
           <circle cx="12" cy="13" r="4"/>
         </svg>
-        Scan Items
+        <span>Start Your First Scan</span>
       </button>
     </div>
   `;

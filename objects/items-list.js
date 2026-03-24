@@ -69,42 +69,38 @@ function buildFilterChips(items, activeFilter) {
   return chips.join('');
 }
 
+const CARD_OVERLAY_BTNS = (it) => `
+  ${it.duplicate_of != null ? `
+    <span class="item-card-duplicate-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+        <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+      </svg>
+      Duplicate
+    </span>` : ''}
+  <button class="item-card-delete" data-id="${it.id}" aria-label="Remove ${it.label}">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+    </svg>
+  </button>
+  <div class="item-card-select-check" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="20 6 9 17 4 12"/>
+    </svg>
+  </div>`;
+
 function buildImageArea(it) {
   if (it.crop_url) {
     return `
       <div class="item-card-image-wrap">
-        ${it.duplicate_of != null ? `
-          <span class="item-card-duplicate-badge">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-              <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
-            </svg>
-            Duplicate
-          </span>` : ''}
-        <button class="item-card-delete" data-id="${it.id}" aria-label="Remove ${it.label}">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-          </svg>
-        </button>
+        ${CARD_OVERLAY_BTNS(it)}
         <img class="item-card-thumb" src="${it.crop_url}" alt="${it.label}" loading="lazy" />
       </div>`;
   }
 
   return `
     <div class="item-card-image-wrap">
-      ${it.duplicate_of != null ? `
-        <span class="item-card-duplicate-badge">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-            <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
-          </svg>
-          Duplicate
-        </span>` : ''}
-      <button class="item-card-delete" data-id="${it.id}" aria-label="Remove ${it.label}">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-        </svg>
-      </button>
+      ${CARD_OVERLAY_BTNS(it)}
       <div class="item-card-thumb-placeholder">
         <span class="item-card-initial">${getInitial(it.label)}</span>
       </div>
@@ -182,12 +178,33 @@ function buildSectionHeader(filteredCount, totalCount) {
   return `
     <div class="items-section-header">
       <span class="items-count">${label}</span>
-      <span class="items-sort-label">
-        Recent
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="6 9 12 15 18 9"/>
-        </svg>
-      </span>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span class="items-sort-label">
+          Recent
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </span>
+        <button class="items-select-toggle" id="itemsSelectToggle" aria-label="Select items">Select</button>
+      </div>
+    </div>`;
+}
+
+function buildBulkBar() {
+  return `
+    <div class="items-bulk-bar" id="itemsBulkBar">
+      <span class="items-bulk-count" id="itemsBulkCount">0 selected</span>
+      <div class="items-bulk-actions">
+        <button class="items-bulk-cancel" id="itemsBulkCancel">Cancel</button>
+        <button class="items-bulk-delete" id="itemsBulkDelete" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+            <path d="M10 11v6"/><path d="M14 11v6"/>
+            <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+          </svg>
+          Delete
+        </button>
+      </div>
     </div>`;
 }
 
@@ -218,5 +235,6 @@ export function render(items, activeFilter = 0) {
   return `
     <div class="room-chips">${chipsHtml}</div>
     ${headerHtml}
-    <div class="items-grid">${cardsHtml}</div>`;
+    <div class="items-grid" id="itemsGrid">${cardsHtml}</div>
+    ${buildBulkBar()}`;
 }
