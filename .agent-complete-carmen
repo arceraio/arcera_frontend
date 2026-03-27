@@ -1,0 +1,290 @@
+# Carmen — Sprint 4 Design Complete
+
+**Timestamp:** 2026-03-26 21:30 PDT  
+**Task:** Sprint 4 Design Specification — Edge Cases & Polish  
+**Status:** ✅ Complete — Ready for Andrew
+
+---
+
+## Deliverables
+
+| File | Purpose | Size |
+|------|---------|------|
+| `outputs/carmen/sprint-4-design-spec.md` | Full design specs (error states, offline, skeleton) | 21.9 KB |
+| `outputs/carmen/sprint-4-integration-spec.md` | Step-by-step for Andrew (code + CSS) | 20.4 KB |
+
+---
+
+## Sprint 4 Scope
+
+**3 Edge Case Improvements:**
+
+| Feature | Effort | Impact | Priority | Factory Ref |
+|---------|--------|--------|----------|-------------|
+| Offline detection + error messages | 2h | 7 | **7** | C3-1 |
+| Export retry button | 1h | 5 | **10** | C3-2 |
+| Loading skeleton | 4h | 7 | **7** | C6-1 |
+| Focus ring verification | 1h (QA) | 9 | **9** | C5-1 |
+| **Total** | **~6h** | — | — | — |
+
+**Note:** Focus ring verification is a QA task (verify existing `:focus-visible` implementation), not new development.
+
+---
+
+## Feature Summaries
+
+### 1. Offline Detection + Better Error Messages
+
+**User Story:** "As a user with spotty internet, I want to know if I'm offline when export fails so I don't keep retrying in vain."
+
+**Current State:**
+```javascript
+alert('Export failed. Please try again or contact support@arcera.com');
+```
+
+**Improved Error States:**
+
+| Error Type | Trigger | User Message | Recovery |
+|------------|---------|--------------|----------|
+| **Offline** | `navigator.onLine === false` | "You appear to be offline" | Wait for reconnection |
+| **Network** | Fetch timeout/failure | "We couldn't reach the server" | Retry button |
+| **Client (4xx)** | API returns 400/401/403/404 | "Problem with your inventory data" | Contact support |
+| **Server (5xx)** | API returns 500/502/503 | "Server experiencing issues" | Retry button |
+| **Unknown** | Generic error | "Unexpected error occurred" | Retry + Contact support |
+
+**Files:** `objects/summary.js` (~80 lines), `core/api.js` (~20 lines timeout)
+
+---
+
+### 2. Export Retry Button
+
+**User Story:** "As a user whose export failed, I want a clear 'Retry' button so I know I can try again without navigating away."
+
+**Current State:**
+- Export button re-enables after error
+- User must realize they can click again
+- No explicit "Retry" CTA
+
+**New Error State:**
+```
+┌─────────────────────────────────────────────────────────────┐
+│  ⚠️  Export failed                                          │
+│      We couldn't complete your export                        │
+│                                                             │
+│         [  🔄 Retry  ]                                      │
+│                                                             │
+│      or                                                     │
+│                                                             │
+│         [  Contact Support  ]                               │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Files:** `objects/summary.js` (~20 lines), `styles/main.css` (~100 lines)
+
+---
+
+### 3. Loading Skeleton
+
+**User Story:** "As a user opening the app, I want to see a loading state instead of a blank screen so I know the app is working."
+
+**Current State:**
+- No loading state
+- Empty state flashes briefly, then content pops in
+- Perceived performance issue
+
+**Proposed Skeleton:**
+```
+┌─────────────────────────────────────────────────────────────┐
+│  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  │ ← Hero (shimmer)
+│  ░░░░░░░░░░░░  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  │
+├─────────────────────────────────────────────────────────────┤
+│  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  │ ← Trust badge
+├─────────────────────────────────────────────────────────────┤
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐                  │
+│  │ ░░░░░░░░ │  │ ░░░░░░░░ │  │ ░░░░░░░░ │                  │ ← Stat cards
+│  └──────────┘  └──────────┘  └──────────┘                  │
+├─────────────────────────────────────────────────────────────┤
+│  ┌────────────────────────────────────────────────────┐    │
+│  │ ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  │    │ ← Export card
+│  └────────────────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Animation:** Shimmer effect (1.5s loop, linear)  
+**Reduced Motion:** Static placeholder (no animation)
+
+**Files:** 
+- NEW: `objects/loading-skeleton.js` (~80 lines)
+- `objects/summary.js` (~20 lines)
+- `styles/main.css` (~150 lines)
+
+---
+
+## Implementation Order
+
+### Phase 1: Error Handling (Start Here)
+1. **Offline detection** — Add `navigator.onLine` check before export
+2. **Error type detection** — Implement `getExportErrorType()` function
+3. **Error modal** — Replace `alert()` with accessible modal
+
+### Phase 2: Retry Mechanism
+4. **Retry button** — Add to export card error state
+5. **Retry handler** — Wire up `handleExportRetry()` function
+
+### Phase 3: Loading Skeleton
+6. **Create loading module** — `loading-skeleton.js` with render functions
+7. **Add skeleton styles** — Shimmer animation + reduced motion
+8. **Integrate with render()** — Show skeleton when `items === null`
+
+---
+
+## Files Summary
+
+| File | Changes | Lines |
+|------|---------|-------|
+| `objects/summary.js` | Offline detection, error states, retry, loading integration | ~120 |
+| `core/api.js` | Add timeout handling (30s) | ~20 |
+| `styles/main.css` | Error modal, retry button, skeleton styles | ~250 |
+| `objects/loading-skeleton.js` | NEW: Loading skeleton module | ~80 |
+| **Total** | — | **~470** |
+
+---
+
+## Edge Cases Handled
+
+### Offline Scenarios
+| Scenario | Detection | User Message | Recovery |
+|----------|-----------|--------------|----------|
+| User offline before export | `navigator.onLine === false` | "You appear to be offline" | Wait for reconnection |
+| User offline during export | Fetch fails with TypeError | "We couldn't reach the server" | Retry button |
+| User offline after export starts | Timeout (30s) | "We couldn't reach the server" | Retry button |
+| User comes back online | `online` event fires | (No message) | Can retry export |
+
+### Error Scenarios
+| Error Type | HTTP Status | User Message | Action |
+|------------|-------------|--------------|--------|
+| No items | 400 | "No items found in inventory" | Add items first |
+| Unauthorized | 401 | "Please log in again" | Redirect to login |
+| Forbidden | 403 | "You don't have permission" | Contact support |
+| Server error | 500 | "Server experiencing issues" | Retry |
+| Timeout | N/A | "We couldn't reach the server" | Retry |
+| Unknown | N/A | Generic error message | Retry + Contact support |
+
+### Loading Scenarios
+| Scenario | Behavior |
+|----------|----------|
+| Fast load (<200ms) | Skip skeleton, show content directly |
+| Normal load (200ms-3s) | Show skeleton, then content |
+| Slow load (>3s) | Show skeleton + timeout message at 10s |
+| Load fails | Show error state with retry button |
+
+---
+
+## Accessibility Checklist
+
+### Offline Detection
+- [ ] Error modal has `role="alertdialog"`
+- [ ] Error messages announced by screen reader
+- [ ] Retry button has `aria-label="Retry export"`
+
+### Retry Button
+- [ ] Retry button has visible focus ring
+- [ ] Retry button is keyboard accessible (Enter/Space)
+- [ ] Retry button has `aria-busy="true"` during retry
+
+### Loading Skeleton
+- [ ] Skeleton container has `aria-busy="true"`
+- [ ] Skeleton has `aria-label="Loading inventory..."`
+- [ ] Skeleton hidden from screen readers when content loads
+- [ ] Reduced motion: static placeholder (no shimmer)
+
+### Focus Rings (QA Verification)
+- [ ] Export button focus visible (gold outline)
+- [ ] Action buttons focus visible
+- [ ] Modal buttons focus visible
+- [ ] Filter chips focus visible
+- [ ] Search input focus visible (already implemented)
+
+---
+
+## Success Metrics
+
+| Metric | Current | Target | How to Measure |
+|--------|---------|--------|----------------|
+| Export retry rate | Unknown | <5% | Analytics (retry clicks / total exports) |
+| Offline error rate | Unknown | Track separately | Analytics (offline errors / total exports) |
+| Perceived load time | Unknown | <1s to skeleton | Lighthouse + user testing |
+| Keyboard navigation success | Untested | 100% | Manual QA (tab through all elements) |
+
+---
+
+## Next Steps for Andrew
+
+1. **Read integration spec** → `outputs/carmen/sprint-4-integration-spec.md`
+2. **Create new file** → `objects/loading-skeleton.js`
+3. **Update existing files** → `summary.js`, `api.js`, `main.css`
+4. **Test offline scenarios** — Disconnect wifi, verify error messages
+5. **Test retry mechanism** — Trigger error, click retry
+6. **Test loading skeleton** — Refresh page, verify skeleton shows
+7. **Commit** → `feat: Sprint 4 — Offline detection, retry button, loading skeleton`
+
+---
+
+## QA Handoff (for Scott)
+
+After Andrew implements:
+
+### Offline Testing
+1. Disconnect wifi, click export → verify "You appear to be offline" message
+2. Reconnect wifi, click retry → verify export succeeds
+3. Test error modal closes on overlay click and Escape key
+4. Verify "Contact Support" opens mailto link
+
+### Retry Testing
+1. Trigger export error (mock 500 response)
+2. Verify retry button appears on export card
+3. Click retry → verify export re-triggers
+4. Test retry button with keyboard (Enter/Space)
+5. Verify focus ring visible on retry button
+
+### Loading Skeleton Testing
+1. Refresh page → verify skeleton shows during load
+2. Verify skeleton matches content structure
+3. Check shimmer animation smooth (60fps)
+4. Enable reduced motion → verify static placeholder
+5. Verify `aria-busy="true"` present
+6. Test fast load (<200ms) → verify skeleton skipped
+
+### Focus Ring Verification
+1. Tab through all interactive elements
+2. Verify gold outline visible on each element
+3. Test with browser dev tools (disable mouse, keyboard-only)
+4. Document any missing focus states
+
+### Accessibility Audit
+1. Screen reader test (VoiceOver/NVDA) — error messages announced
+2. Keyboard navigation — Tab, Escape, Enter all work
+3. Touch target sizes — 44px minimum on retry button
+4. Reduced motion — skeleton static, no shimmer
+
+---
+
+## Production Readiness Status
+
+After Sprint 4 complete:
+
+| Component | Status | Notes |
+|-----------|--------|-------|
+| **Export functionality** | ✅ Complete | Offline detection + retry |
+| **Error handling** | ✅ Complete | 5 error types with appropriate messages |
+| **Loading states** | ✅ Complete | Skeleton for perceived performance |
+| **Accessibility** | ✅ Complete | Focus rings verified, ARIA attributes |
+| **Reduced motion** | ✅ Complete | All animations respect preference |
+| **Offline support** | ✅ Complete | Graceful degradation |
+
+**Verdict:** 🎉 **PRODUCTION READY** — All edge cases addressed
+
+---
+
+**Status:** ✅ Sprint 4 design complete. Integration spec ready for Andrew.

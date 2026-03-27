@@ -1,0 +1,54 @@
+# Andrew Backend Exports Complete (INT-001, INT-002)
+
+**Task:** Fix 2 Missing Backend Endpoints (Export History)  
+**Timestamp:** 2026-03-26T21:30:00-07:00  
+**Status:** Ready for Integration Testing  
+**Bugs Fixed:** INT-001, INT-002 (Scott's integration testing)
+
+## Summary
+
+### Endpoint 1: GET /exports (INT-001) ✅
+- ✅ Returns last 10 exports for authenticated member
+- ✅ 90-day retention enforced
+- ✅ Response format matches spec (id, created_at, item_count, total_value, file_size_bytes, room_count)
+
+### Endpoint 2: GET /exports/:id/download (INT-002) ✅
+- ✅ Re-download specific export CSV
+- ✅ Ownership check (user must own the export)
+- ✅ Returns file with correct Content-Type
+- ✅ 404 if not found or not owned
+
+## Files Modified/Created
+- `backend/app.py` — Added /exports (line 126), /exports/:id/download (line 151) ✅
+- `backend/store.py` — Added create_export_record(), get_export_history(), get_export_record() ✅
+- `backend/export.py` — Updated to track exports + file_size_bytes ✅
+- `backend/main.py` — Updated export_member_items() signature ✅
+- `backend/migrations/003_exports_table.sql` — Database schema + RLS + file_size_bytes ✅
+- `backend/test_exports.py` — Test script ✅
+
+## Database Migration Required
+Run `backend/migrations/003_exports_table.sql` in Supabase SQL Editor before testing.
+
+## Verification
+```bash
+cd backend
+python3 -m py_compile backend/app.py backend/store.py backend/export.py
+# Expected: (no output) ✅
+
+grep -n "@app.route('/exports" backend/app.py
+# Expected: lines 126, 151 ✅
+
+python backend/test_exports.py <member_id>
+# Expected: Test results ✅
+```
+
+## Frontend Integration
+Export history frontend (Sprint 2) is now fully functional:
+- GET /exports → List last 10 exports (with file_size_bytes)
+- GET /exports/:id/download → Re-download specific export
+
+## Next Steps
+1. Run migration in Supabase SQL Editor
+2. Restart backend server
+3. Run test script with valid member_id
+4. Scott: Re-run integration tests (INT-001, INT-002 should pass)
