@@ -1,4 +1,5 @@
 const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+import { apiFetch } from './api.js';
 
 const ROOMS = [
   "Living Room", "Bedroom", "Kitchen", "Bathroom",
@@ -269,17 +270,25 @@ function renderSheet() {
     const costRaw     = parseFloat(document.getElementById('itemSheetCost').value);
     const cost        = isNaN(costRaw) ? null : costRaw;
     const room_id     = parseInt(document.getElementById('itemSheetRoom').value) || null;
-    await fetch(`${API}/items/${it.id}`, {
+    const res = await apiFetch(`/items/${it.id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, description, purchase_year: year, cost, room_id }),
     });
+    if (!res.ok) {
+      alert('Could not save changes. Please try again.');
+      return;
+    }
     closeSheet();
     onRefresh();
   });
 
   document.getElementById('itemSheetDelete').addEventListener('click', async () => {
-    await fetch(`${API}/items/${it.id}`, { method: 'DELETE' });
+    const res = await apiFetch(`/items/${it.id}`, { method: 'DELETE' });
+    if (!res.ok) {
+      alert('Could not delete item. Please try again.');
+      return;
+    }
     closeSheet();
     onRefresh();
   });

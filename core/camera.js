@@ -109,8 +109,8 @@ function showPickScreen() {
 
 /* ── Step 2: Upload + Detect ── */
 
-function showScanProgress(step) {
-  const steps = ['Uploading photo…', 'Detecting items…'];
+function showScanProgress(step, progressNote = '') {
+  const steps = ['Uploading photos…', 'Detecting items…'];
   setBody(`
     <div class="camera-scanning">
       <div class="camera-progress-steps">
@@ -121,6 +121,7 @@ function showScanProgress(step) {
           </div>
         `).join('')}
       </div>
+      ${progressNote ? `<p class="camera-scanning-label" style="margin-top:8px;font-size:0.85rem;color:var(--color-muted)">${progressNote}</p>` : ''}
       <button class="camera-cancel-btn" id="cameraCancelBtn" aria-label="Cancel scan">Cancel</button>
     </div>
   `);
@@ -135,18 +136,23 @@ async function doScan() {
 
   const controller = new AbortController();
   window._cameraScanAbort = controller;
+  const perImageMs = 20000;
+  const timeoutMs = Math.max(30000, currentFiles.length * perImageMs);
   const timeoutId = setTimeout(() => {
     controller.abort();
     setBody(`
       <div class="camera-scanning">
-        <p class="camera-error">Server is taking longer than expected. Try again.</p>
+        <p class="camera-error">
+          Scan timed out after ${Math.round(timeoutMs / 1000)}s.
+          ${currentFiles.length > 1 ? 'Try scanning fewer photos at a time.' : 'Try again.'}
+        </p>
         <button class="camera-action-btn" id="cameraRetryBtn" style="margin-top:16px">
           <span>Try Again</span>
         </button>
       </div>
     `);
     document.getElementById('cameraRetryBtn')?.addEventListener('click', showPickScreen);
-  }, 30000);
+  }, timeoutMs);
 
   let scanResults = [];
 
@@ -248,9 +254,17 @@ async function showReviewScreen(allDetections) {
     setBody(`
       <div class="camera-scanning">
         <p class="camera-noresult-title">No items detected</p>
-        <p class="camera-error">Try a clearer photo with visible objects in frame.</p>
+        <p class="camera-error" style="text-align:left; line-height:1.5">
+          The AI currently recognises furniture, TVs, laptops, lamps, and common
+          household objects. It cannot yet detect jewellery, artwork, clothing,
+          musical instruments, or most small valuables.
+        </p>
+        <p class="camera-error" style="text-align:left; margin-top:8px; line-height:1.5">
+          For items not detected automatically, you can add them manually from
+          the Items tab.
+        </p>
         <button class="camera-action-btn" id="cameraRetryBtn" style="margin-top:16px">
-          <span>Try Again</span>
+          <span>Try Another Photo</span>
         </button>
       </div>
     `);
@@ -295,6 +309,7 @@ async function showReviewScreen(allDetections) {
     <div class="camera-item-row"
       data-class-id="${d.class_id}"
       data-bbox="${JSON.stringify(d.bbox || null)}"
+      data-confidence="${d.confidence || 0}"
       data-local-path="${d.localPath || ''}"
       data-storage-path="${d.storagePath || ''}">
       <button class="camera-item-remove" aria-label="Remove item">
@@ -385,6 +400,7 @@ async function doStore() {
     const labelInput = row.querySelector('[name="label"]');
     groups.get(key).items.push({
       class_id: parseInt(row.dataset.classId),
+      confidence: parseFloat(row.dataset.confidence) || 0,
       label: labelInput ? labelInput.value.trim() || undefined : undefined,
       purchase_year: parseInt(row.querySelector('[name="year"]').value) || null,
       cost: parseFloat(row.querySelector('[name="cost"]').value) || null,
@@ -400,18 +416,42 @@ async function doStore() {
     </div>
   `);
 
-  try {
-    for (const group of groups.values()) {
+  const failures = [];
+
+  for (const group of groups.values()) {
+    try {
       const body = { items: group.items, path: group.localPath };
       if (group.storagePath) body.original_storage_path = group.storagePath;
-      await apiFetch('/store', {
+      const res = await apiFetch('/store', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       });
+      if (!res.ok) failures.push(group);
+    } catch {
+      failures.push(group);
     }
-  } catch {
-    // silent fail — items may have partially saved; refresh will show what landed
+  }
+
+  if (failures.length > 0) {
+    setBody(`
+      <div class="camera-scanning">
+        <p class="camera-error">
+          ${failures.length === groups.size
+            ? 'Could not save items. Please try again.'
+            : `${groups.size - failures.length} of ${groups.size} photos saved. Some items may be missing — please re-scan the failed photos.`
+          }
+        </p>
+        <button class="camera-action-btn" id="cameraRetryBtn" style="margin-top:16px">
+          <span>OK</span>
+        </button>
+      </div>
+    `);
+    document.getElementById('cameraRetryBtn').addEventListener('click', () => {
+      closeModal();
+      onRefresh();
+    });
+    return;
   }
 
   closeModal();

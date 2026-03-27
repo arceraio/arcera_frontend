@@ -114,7 +114,12 @@ function bindMainEvents() {
     const ids = [...grid.querySelectorAll('.item-card--selected[data-id]')]
       .map(c => c.dataset.id);
     if (!ids.length) return;
+    const confirmed = window.confirm(
+      `Permanently delete ${ids.length} item${ids.length !== 1 ? 's' : ''}? This cannot be undone.`
+    );
+    if (!confirmed) return;
     await Promise.all(ids.map(id => apiFetch(`/items/${id}`, { method: 'DELETE' })));
+    exitSelectMode();
     await loadItems();
   });
 }
